@@ -1,0 +1,34 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "DataDrivenWithExcel",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "JaewonCho",
+	"CreatedByURL": "http://linkedin.com/in/o2un/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "O2unEditorTool",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "O2unExcelHelper",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "O2unDataHelper",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
