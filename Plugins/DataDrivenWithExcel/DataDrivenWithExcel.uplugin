@@ -29,6 +29,11 @@
 			"Name": "O2unDataHelper",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "O2unCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	]
 }

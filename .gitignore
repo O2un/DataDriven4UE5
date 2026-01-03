@@ -73,3 +73,5 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+ExcelHelper/x64
+ExcelHelper/ExcelHelper/x64

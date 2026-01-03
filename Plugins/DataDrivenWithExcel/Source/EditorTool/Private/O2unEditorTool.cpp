@@ -11,6 +11,7 @@
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Input/SButton.h"
+#include "O2unExcelHelper.h"
 
 void FO2unEditorToolModule::StartupModule()
 {
@@ -83,6 +84,7 @@ void FO2unEditorToolModule::OnMenuClicked()
                             SNew(SButton)
                                 .Text(FText::FromString(L"닫기"))
                                 .OnClicked_Lambda([this]() -> FReply {
+                                O2un::FExcelHelper::Test();
                                 if (_toolWindow.IsValid()) _toolWindow.Pin()->RequestDestroyWindow();
                                 return FReply::Handled();
                                     })

@@ -1,8 +1,10 @@
 #include "O2unExcelHelper.h"
+#include "ExcelHelper.h"
+#include "O2unDllHelper.h"
 
 void FO2unExcelHelperModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	_excelHelperHandle = O2un::FPluginHelper::LoadDLL("ExcelHelper");
 }
 
 void FO2unExcelHelperModule::ShutdownModule()
@@ -14,3 +16,11 @@ void FO2unExcelHelperModule::ShutdownModule()
 #undef LOCTEXT_NAMESPACE
 
 IMPLEMENT_MODULE(FO2unExcelHelperModule, O2unExcelHelper)
+
+namespace O2un
+{
+	void FExcelHelper::Test()
+	{
+		PrintDLL();
+	}
+}

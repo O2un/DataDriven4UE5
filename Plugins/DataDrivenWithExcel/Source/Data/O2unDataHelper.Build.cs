@@ -1,5 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+using System.IO;
 using UnrealBuildTool;
 
 public class O2unDataHelper : ModuleRules
@@ -11,14 +12,16 @@ public class O2unDataHelper : ModuleRules
         PublicIncludePaths.AddRange(
             new string[] {
 				// ... add public include paths required here ...
-			}
+                Path.Combine(ModuleDirectory, "public")
+            }
             );
 
 
         PrivateIncludePaths.AddRange(
             new string[] {
 				// ... add other private include paths required here ...
-			}
+                Path.Combine(ModuleDirectory, "private")
+            }
             );
 
 

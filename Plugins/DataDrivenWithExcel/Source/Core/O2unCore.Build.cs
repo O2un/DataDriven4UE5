@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class O2unExcelHelper : ModuleRules
+public class O2unCore : ModuleRules
 {
-    public O2unExcelHelper(ReadOnlyTargetRules Target) : base(Target)
+    public O2unCore(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -30,8 +30,7 @@ public class O2unExcelHelper : ModuleRules
             {
                 "Core",
 				// ... add other public dependencies that you statically link with here ...
-                "O2unCore",
-            }
+			}
             );
 
 
@@ -43,6 +42,7 @@ public class O2unExcelHelper : ModuleRules
                 "Slate",
                 "SlateCore",
 				// ... add private dependencies that you statically link with here ...
+                "Projects",
             }
             );
 
@@ -53,15 +53,5 @@ public class O2unExcelHelper : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
             );
-
-        if (Target.Type == TargetType.Editor)
-        {
-            string dllPath = Path.Combine(ModuleDirectory, "./");
-
-            PublicIncludePaths.Add(Path.Combine(dllPath, "Include"));
-            PublicAdditionalLibraries.Add(Path.Combine(dllPath,"ExcelHelper.lib"));
-            //PublicDelayLoadDLLs.Add("ExcelHelper.dll");
-            RuntimeDependencies.Add("$(BinaryOutputDir)/ExcelHelper.dll", Path.Combine(dllPath, "ExcelHelper.dll"));
-        }
     }
 }
