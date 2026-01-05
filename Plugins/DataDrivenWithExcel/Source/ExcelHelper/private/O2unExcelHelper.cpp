@@ -1,3 +1,4 @@
+#include "O2unCore.h"
 #include "O2unExcelHelper.h"
 #include "ExcelHelper.h"
 #include "O2unDllHelper.h"
@@ -5,6 +6,7 @@
 void FO2unExcelHelperModule::StartupModule()
 {
 	_excelHelperHandle = O2un::FPluginHelper::LoadDLL("ExcelHelper");
+	SetLogHandler(&FO2unLogProvider);
 }
 
 void FO2unExcelHelperModule::ShutdownModule()
@@ -19,8 +21,8 @@ IMPLEMENT_MODULE(FO2unExcelHelperModule, O2unExcelHelper)
 
 namespace O2un
 {
-	void FExcelHelper::Test()
+	void FExcelHelper::Testt(FString dataRoot)
 	{
-		PrintDLL();
+		Test(TCHAR_TO_UTF8(*dataRoot));
 	}
 }

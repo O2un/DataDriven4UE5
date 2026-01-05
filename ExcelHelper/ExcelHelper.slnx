@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ExcelHelper/ExcelHelper.vcxproj" />
+  <Project Path="ExcelHelper/ExcelHelper.vcxproj" Id="6a45b9e2-5890-4bcf-a5b9-daf0fbd5ece2" />
 </Solution>

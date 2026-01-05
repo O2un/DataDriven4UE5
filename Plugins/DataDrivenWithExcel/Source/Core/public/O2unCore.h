@@ -15,3 +15,8 @@ public:
 
 private:
 };
+
+void FO2unLogProvider(const char* message)
+{
+	UE_LOG(LogTemp, Display, TEXT("[DataDrivenTool] %s"), UTF8_TO_TCHAR(message));
+}

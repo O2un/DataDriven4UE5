@@ -23,6 +23,6 @@ namespace O2un
 	class O2UNEXCELHELPER_API FExcelHelper : public Singleton<FExcelHelper>
 	{
 	public:
-		static void Test();
+		static void Testt(FString dataRoot);
 	};
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PCH_H
+#define PCH_H
 
 #ifdef EXCELHELPER_EXPORTS
 #define O2UN_API __declspec(dllexport)
@@ -6,9 +7,6 @@
 #define O2UN_API __declspec(dllimport)
 #endif // EXCELHELPER_EXPORTS
 
-extern "C" 
-{
-	O2UN_API void PrintDLL();
-}
+#include "Singleton.h"
 
-
+#endif // PCH_H

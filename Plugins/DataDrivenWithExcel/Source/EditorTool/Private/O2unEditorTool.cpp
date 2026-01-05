@@ -12,6 +12,7 @@
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Input/SButton.h"
 #include "O2unExcelHelper.h"
+#include "O2unProjectSettings.h"
 
 void FO2unEditorToolModule::StartupModule()
 {
@@ -67,9 +68,12 @@ void FO2unEditorToolModule::OnMenuClicked()
                         .AutoHeight()
                         .Padding(0, 0, 0, 10)
                         [
-                            SNew(STextBlock)
-                                .Text(FText::FromString(L"커스텀 윈도우가 열렸습니다."))
-                                .Font(FAppStyle::GetFontStyle("BoldFont"))
+                            SNew(SButton)
+                                .Text(FText::FromString(L"테스트"))
+                                .OnClicked_Lambda([this]() -> FReply {
+                                O2un::FExcelHelper::Testt(UO2unProjectSettings::Get().RawExcelDirectory.Path);
+                                return FReply::Handled();
+                                    })
                         ]
                         + SVerticalBox::Slot()
                         .FillHeight(1.0f)
@@ -84,7 +88,6 @@ void FO2unEditorToolModule::OnMenuClicked()
                             SNew(SButton)
                                 .Text(FText::FromString(L"닫기"))
                                 .OnClicked_Lambda([this]() -> FReply {
-                                O2un::FExcelHelper::Test();
                                 if (_toolWindow.IsValid()) _toolWindow.Pin()->RequestDestroyWindow();
                                 return FReply::Handled();
                                     })
