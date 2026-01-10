@@ -2,5 +2,5 @@
 
 UO2unProjectSettings::UO2unProjectSettings()
 {
-
+	GeneratedSourceDirectory.Path = FPaths::Combine(FPaths::GameSourceDir());
 }

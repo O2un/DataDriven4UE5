@@ -9,7 +9,12 @@ void SetLogHandler(logCallback c)
 	Logger::Instance().SetLogHandler(c);
 }
 
-void Test(const char* root)
+void SetCodeGenerateInfo(const char* projectName, const char* path)
+{
+	ExcelLoader::Instance().SetCodeGeneratePath(projectName, path);
+}
+
+void GenerateAllDataClass(const char* root)
 {
 	ExcelLoader::Instance().GenerateAllDataClass(root);
 }

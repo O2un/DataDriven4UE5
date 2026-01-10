@@ -16,6 +16,7 @@ export class ExcelLoader : public Singleton<ExcelLoader>
 public:
 	void GenerateAllDataClass(std::string_view root);
 	OpenXLSX::XLWorkbook LoadWorkbook(OpenXLSX::XLDocument& doc, std::string_view fileName);
+	void SetCodeGeneratePath(std::string_view projectName, std::string_view path);
 
 private:
 	void ProcessAllFiles(std::string_view root, auto&& func, auto&&...args);

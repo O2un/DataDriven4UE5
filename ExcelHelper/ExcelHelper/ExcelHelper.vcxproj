@@ -28,11 +28,19 @@
     <ClCompile Include="sources\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="sources\StringHelper.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="sources\ExcelHelper.h" />
     <ClInclude Include="sources\pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="template\StaticDataTemplate.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ExcelHelper.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

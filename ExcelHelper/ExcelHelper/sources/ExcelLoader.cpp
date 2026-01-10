@@ -95,3 +95,8 @@ OpenXLSX::XLWorkbook ExcelLoader::LoadWorkbook(OpenXLSX::XLDocument& doc, std::s
 		return OpenXLSX::XLWorkbook();
 	}
 }
+
+void ExcelLoader::SetCodeGeneratePath(std::string_view projectName, std::string_view path)
+{
+	_codeGenerator.SetCodeGeneratePath(projectName, path);
+}

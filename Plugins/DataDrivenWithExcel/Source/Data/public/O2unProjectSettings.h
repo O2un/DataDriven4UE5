@@ -15,6 +15,9 @@ public:
 #if WITH_EDITORONLY_DATA
     UPROPERTY(Config, EditAnywhere, Category = "Editor Only", meta = (RelativePath))
     FDirectoryPath RawExcelDirectory;
+
+    UPROPERTY(Config, EditAnywhere, Category = "Editor Only", meta = (ConfigRestartRequired = false))
+    FDirectoryPath GeneratedSourceDirectory;
 #endif
     UPROPERTY(Config, EditAnywhere, Category = "Runtime", meta = (ContentDir))
     FDirectoryPath BinaryDirectory;

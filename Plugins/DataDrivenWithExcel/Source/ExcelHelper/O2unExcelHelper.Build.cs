@@ -31,6 +31,8 @@ public class O2unExcelHelper : ModuleRules
                 "Core",
 				// ... add other public dependencies that you statically link with here ...
                 "O2unCore",
+                "O2unDataHelper",
+                "GameProjectGeneration",
             }
             );
 
