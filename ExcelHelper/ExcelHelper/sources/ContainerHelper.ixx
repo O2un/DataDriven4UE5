@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
-module;
-#include "pch.h"
-#include <map>
-
-export module ContainerHelper;
+export module IContainerHelper;
+import <map>;
 
 export namespace CommonHelper
 {

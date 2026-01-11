@@ -1,11 +1,10 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-// Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
-#include "pch.h"
-#include <vector>
-#include <string>
+export module ILogger;
 
-typedef void(*LogHandler)(const char*);
-class Logger : public Singleton<Logger>
+import ISingleton;
+import <string_view>;
+
+export typedef void(*LogHandler)(const char*);
+export class Logger : public CommonHelper::Singleton<Logger>
 {
 public:
     static void UELog(std::string_view msg)

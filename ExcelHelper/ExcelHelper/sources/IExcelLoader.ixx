@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
-module;
-#include "pch.h"
-#include <string>
-#include <memory>
-#include <filesystem>
-#include <OpenXLSX.hpp>
-
 export module IExcelLoader;
+import <string>;
+import <memory>;
+import <filesystem>;
+import <OpenXLSX.hpp>;
 
 import ICodeGenerator;
+import ISingleton;
 
 namespace fs = std::filesystem;
 
-export class ExcelLoader : public Singleton<ExcelLoader>
+export class ExcelLoader : public CommonHelper::Singleton<ExcelLoader>
 {
 public:
 	void GenerateAllDataClass(std::string_view root);

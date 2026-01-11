@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
-module;
-#include "pch.h"
-#include <filesystem>
-#include <string>
-#include <vector>
-
-#include "Logger.h"
-
 module IExcelLoader;
+
+import <filesystem>;
+import <string>;
+import <vector>;
+
+import ILogger;
 
 namespace fs = std::filesystem;
 

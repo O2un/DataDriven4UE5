@@ -25,17 +25,14 @@
     <ClCompile Include="sources\ExcelHelper.cpp" />
     <ClCompile Include="sources\ExcelLoader.cpp" />
     <ClCompile Include="sources\IExcelLoader.ixx" />
-    <ClCompile Include="sources\Logger.h" />
-    <ClCompile Include="sources\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="sources\Logger.ixx" />
+    <ClCompile Include="sources\Singleton.ixx" />
     <ClCompile Include="sources\StringHelper.ixx" />
+    <ClCompile Include="sources\TimeHelper.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="sources\ExcelHelper.h" />
-    <ClInclude Include="sources\pch.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="template\DataAssetTemplate.txt" />
@@ -160,10 +157,13 @@
       <PreprocessorDefinitions>NDEBUG;EXCELHELPER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(projectdir)3rd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <TranslateIncludes>false</TranslateIncludes>
+      <BuildStlModules>true</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

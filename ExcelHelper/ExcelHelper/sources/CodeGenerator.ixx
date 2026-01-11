@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
 module;
-#include "pch.h"
 #include "OpenXLSX.hpp"
 
 export module ICodeGenerator;
@@ -28,9 +27,10 @@ private:
 
 	std::string_view GetOrLoadTemplate(int resourceID);
 	bool CreateStaticData(const OpenXLSX::XLWorksheet& sheet);
-	bool CreateDataManager(const OpenXLSX::XLWorksheet& sheet);
+	bool CreateDataAsset(const OpenXLSX::XLWorksheet& sheet);
 	void ReplaceTag(std::string& target, std::string_view tag, std::string_view value);
 	GeneratedCodeResult BuildValuesSection(const OpenXLSX::XLWorksheet& sheet);
 	std::string MapToCppType(std::string_view excelType);
-	void SaveFile(std::string_view className, std::string_view header, std::string_view cpp);
+	void SaveFile(std::string_view detailPath, std::string_view header, std::string_view cpp);
+	void SaveFile(std::string_view path, std::string_view content);
 };

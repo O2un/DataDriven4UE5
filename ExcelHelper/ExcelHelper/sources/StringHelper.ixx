@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
-module;
-#include "pch.h"
-#include <string_view>
-#include <ranges>
-#include <algorithm>
-#include <cctype>
+export module IStringHelper;
+import <string_view>;
+import <ranges>;
+import <algorithm>;
+import <cctype>;
 
-export module StringHelper;
 export namespace CommonHelper
 {
     inline bool Equals(std::string_view lhs, std::string_view rhs, bool ignoreCase = true) 

@@ -1,19 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
 module;
-#include "pch.h"
-#include "Logger.h"
-#include <Windows.h>
-#include <filesystem>
-#include <fstream>
-#include <format>
-#include <iostream>
-#include <unordered_map>
 #include "../resource.h"
 
+module ICodeGenerator;
+
+import <Windows.h>;
+import <fstream>;
+import <format>;
+import <iostream>;
+import <unordered_map>;
+import <filesystem>;
 import ICodeGenerator;
-import StringHelper;
-import ContainerHelper;
+import IStringHelper;
+import IContainerHelper;
+import ITimeHelper;
+import ILogger;
 
 namespace fs = std::filesystem;
 extern "C" IMAGE_DOS_HEADER __ImageBase;
@@ -24,7 +26,7 @@ void CodeGenerator::GenerateHeader(const OpenXLSX::XLWorksheet& sheet)
     {
         Logger::UELog(std::format("{}시트의 StaticData 파일 생성 실패", sheet.name()));
     }
-    if (false == CreateDataManager(sheet))
+    if (false == CreateDataAsset(sheet))
     {
         Logger::UELog(std::format("{}시트의 DataManager 파일 생성 실패", sheet.name()));
     }
@@ -51,10 +53,12 @@ bool CodeGenerator::CreateStaticData(const OpenXLSX::XLWorksheet& sheet)
     }
 
     auto [properties, inits, assigns] = BuildValuesSection(sheet);
-
+    std::string currentYear = CommonHelper::GetCurrentYear();
+    std::string className = sheet.name();
     std::string headerContent{ header };
     {
-        ReplaceTag(headerContent, "#CLASSNAME#", sheet.name());
+        ReplaceTag(headerContent, "#COPYRIGHT#", std::format("// SPDX-License-Identifier: AGPL-3.0-or-later\n// Copyright (c) {} [Jaewon Cho]. All rights reserved.", currentYear));
+        ReplaceTag(headerContent, "#CLASSNAME#", className);
         ReplaceTag(headerContent, "#PROJECT_API#", _projectName);
 
         ReplaceTag(headerContent, "#VALUES#", properties);
@@ -63,17 +67,45 @@ bool CodeGenerator::CreateStaticData(const OpenXLSX::XLWorksheet& sheet)
 
     std::string cppContent{ cpp };
     {
-        ReplaceTag(cppContent, "#CLASSNAME#", sheet.name());
+        ReplaceTag(cppContent, "#COPYRIGHT#", std::format("// SPDX-License-Identifier: AGPL-3.0-or-later\n// Copyright (c) {} [Jaewon Cho]. All rights reserved.", currentYear));
+        ReplaceTag(cppContent, "#CLASSNAME#", className);
         ReplaceTag(cppContent, "#ASSIGN#", assigns);
     }
 
-    SaveFile(sheet.name(), headerContent, cppContent);
+    SaveFile(std::format("StaticData/{}StaticData", className), headerContent, cppContent);
 
     return true;
 }
 
-bool CodeGenerator::CreateDataManager(const OpenXLSX::XLWorksheet& sheet)
+bool CodeGenerator::CreateDataAsset(const OpenXLSX::XLWorksheet& sheet)
 {
+    auto header = GetOrLoadTemplate(TEMPLATE_DATAASSET);
+    if (header.empty())
+    {
+        return false;
+    }
+
+    auto cpp = GetOrLoadTemplate(TEMPLATE_DATAASSET_CPP);
+    if (cpp.empty())
+    {
+        return false;
+    }
+
+    std::string className = sheet.name();
+    std::string currentYear = CommonHelper::GetCurrentYear();
+    std::string headerContent{ header };
+    {
+        ReplaceTag(headerContent, "#COPYRIGHT#", std::format("// SPDX-License-Identifier: AGPL-3.0-or-later\n// Copyright (c) {} [Jaewon Cho]. All rights reserved.", currentYear));
+        ReplaceTag(headerContent, "#CLASSNAME#", className);
+    }
+
+    std::string cppContent{ cpp };
+    {
+        ReplaceTag(cppContent, "#COPYRIGHT#", std::format("// SPDX-License-Identifier: AGPL-3.0-or-later\n// Copyright (c) {} [Jaewon Cho]. All rights reserved.", currentYear));
+        ReplaceTag(cppContent, "#CLASSNAME#", className);
+    }
+
+    SaveFile(std::format("DataAsset/{}DataAsset", className), headerContent, cppContent);
     return true;
 }
 
@@ -149,34 +181,24 @@ std::string CodeGenerator::MapToCppType(std::string_view excelType)
     return CommonHelper::GetValueOrDefault(typeMap, lowerType, std::string{ "FString" });
 }
 
-void CodeGenerator::SaveFile(std::string_view className, std::string_view header, std::string_view cpp)
+void CodeGenerator::SaveFile(std::string_view detailPath, std::string_view header, std::string_view cpp)
+{
+    SaveFile(std::format("{}/Private/{}.h", _codePath, detailPath), header);
+    SaveFile(std::format("{}/Public/{}.cpp", _codePath, detailPath), cpp);
+}
+
+void CodeGenerator::SaveFile(std::string_view path, std::string_view content)
 {
     try
     {
-        fs::path outPath = std::format("{}/Public/StaticData/{}StaticData.h", _codePath, className);
+        fs::path outPath{ path };
         fs::create_directories(outPath.parent_path());
-
         std::ofstream outFile(outPath);
         if (outFile.is_open())
         {
-            outFile << header;
-            outFile.close();
-        }
-    }
-    catch (const std::ios_base::failure e)
-    {
-        Logger::UELog(std::format("{} _ {}", e.what(), e.code().value()));
-    }
-
-    try
-    {
-        fs::path outPath = std::format("{}/Private/StaticData/{}StaticData.cpp", _codePath, className);
-        fs::create_directories(outPath.parent_path());
-
-        std::ofstream outFile(outPath);
-        if (outFile.is_open())
-        {
-            outFile << cpp;
+            const unsigned char BOM[] = { 0xEF, 0xBB, 0xBF };
+            outFile.write(reinterpret_cast<const char*>(BOM), 3);
+            outFile.write(content.data(), content.size());
             outFile.close();
         }
     }
