@@ -3,14 +3,16 @@
 // ExcelHelper.rc에서 사용되고 있습니다.
 //
 #define TEMPLATE_STATIC_DATA            101
-#define IDR_TEXT1                       102
 #define TEMPLATE_STATIC_DATA_CPP        102
+#define TEMPLATE_DATAASSET              104
+#define IDR_TEXT2                       105
+#define TEMPLATE_DATAASSET_CPP          105
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        103
+#define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

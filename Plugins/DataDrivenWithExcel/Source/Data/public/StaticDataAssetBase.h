@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
 
 #pragma once
 
