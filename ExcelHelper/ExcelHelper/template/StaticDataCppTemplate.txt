@@ -1,0 +1,10 @@
+#include "StaticData/#CLASSNAME#StaticData.h"
+
+void U#CLASSNAME#StaticData::Initialize(const FStaticDataInitStruct& data)
+{
+	Super::Initialize(data);
+
+	const auto& initor = static_cast<const F#CLASSNAME#InitStruct&>(data);
+
+#ASSIGN#
+}

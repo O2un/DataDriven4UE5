@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="sources\CodeGenerator.cpp" />
     <ClCompile Include="sources\CodeGenerator.ixx" />
+    <ClCompile Include="sources\ContainerHelper.ixx" />
     <ClCompile Include="sources\ExcelHelper.cpp" />
     <ClCompile Include="sources\ExcelLoader.cpp" />
     <ClCompile Include="sources\IExcelLoader.ixx" />
@@ -37,6 +38,7 @@
     <ClInclude Include="sources\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="template\StaticDataCppTemplate.txt" />
     <Text Include="template\StaticDataTemplate.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,11 @@
  * Auto-generated Static Data Class
  * 수정 금지: 엑셀 파서에 의해 자동 생성된 파일입니다.
  */
+struct F#CLASSNAME#InitStruct : FStaticDataInitStruct
+{
+#INITOR#
+};
+
 UCLASS(BlueprintType, EditInlineNew, DefaultToInstanced)
 class #PROJECT_API# U#CLASSNAME#StaticData : public UStaticDataBase
 {
@@ -15,4 +20,5 @@ class #PROJECT_API# U#CLASSNAME#StaticData : public UStaticDataBase
 
 public:
 #VALUES#
+    virtual void Initialize(const FStaticDataInitStruct& data) override;
 };

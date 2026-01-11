@@ -39,6 +39,9 @@
     <ClCompile Include="sources\StringHelper.ixx">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="sources\ContainerHelper.ixx">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sources\ExcelHelper.h">
@@ -56,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="template\StaticDataTemplate.txt" />
+    <Text Include="template\StaticDataCppTemplate.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExcelHelper.rc">

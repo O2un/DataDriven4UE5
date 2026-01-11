@@ -8,17 +8,25 @@
  * Auto-generated Static Data Class
  * 수정 금지: 엑셀 파서에 의해 자동 생성된 파일입니다.
  */
+struct FtestDataInitStruct : FStaticDataInitStruct
+{
+	int32 _data;
+	float _value;
+
+};
+
 UCLASS(BlueprintType, EditInlineNew, DefaultToInstanced)
 class DATADRIVEN4UE5_API UtestDataStaticData : public UStaticDataBase
 {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
-    int32 data;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
+	int32 _data;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
-    float value;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
+	float _value;
 
 
+    virtual void Initialize(const FStaticDataInitStruct& data) override;
 };

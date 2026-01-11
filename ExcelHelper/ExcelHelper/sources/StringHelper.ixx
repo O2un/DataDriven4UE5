@@ -6,7 +6,7 @@ module;
 #include <cctype>
 
 export module StringHelper;
-export namespace Str
+export namespace CommonHelper
 {
     inline bool Equals(std::string_view lhs, std::string_view rhs, bool ignoreCase = true) 
     {

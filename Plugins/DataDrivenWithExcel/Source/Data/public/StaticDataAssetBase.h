@@ -5,16 +5,17 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "StaticDataBase.h"
-#include "UBaseStaticDataAsset.generated.h"
+#include "StaticDataAssetBase.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class O2UNDATAHELPER_API UUBaseStaticDataAsset : public UDataAsset
+UCLASS(Abstract, BlueprintType)
+class O2UNDATAHELPER_API UStaticDataAssetBase : public UDataAsset
 {
 	GENERATED_BODY()
-	
+
+protected:
 	UPROPERTY(VisibleAnywhere, Instanced, Category = "StaticData", meta = (ShowOnlyInnerProperties))
 	TMap<FStaticDataKey, UStaticDataBase*> _dataList;
 };
