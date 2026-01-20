@@ -22,7 +22,7 @@ public:
     FDirectoryPath GeneratedSourceDirectory;
 #endif
     UPROPERTY(Config, EditAnywhere, Category = "Runtime", meta = (ContentDir))
-    FDirectoryPath BinaryDirectory;
+    FDirectoryPath DataAssetDirectory;
 
     static const UO2unProjectSettings& Get() { return *GetDefault<UO2unProjectSettings>(); }
 

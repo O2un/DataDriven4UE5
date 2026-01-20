@@ -32,6 +32,8 @@ public class O2unDataHelper : ModuleRules
 				// ... add other public dependencies that you statically link with here ...
                 "DeveloperSettings",
                 "O2unCore",
+                "Json",
+                "JsonUtilities",
             }
             );
 

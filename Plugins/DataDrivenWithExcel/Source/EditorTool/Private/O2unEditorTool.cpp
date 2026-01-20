@@ -13,8 +13,9 @@
 #include "Widgets/Text/STextBlock.h"
 #include "Widgets/Layout/SScrollBox.h"
 #include "Widgets/Input/SButton.h"
-#include "O2unExcelHelper.h"
+
 #include "O2unProjectSettings.h"
+#include "ExcelHelperSubsystem.h"
 
 void FO2unEditorToolModule::StartupModule()
 {
@@ -70,12 +71,58 @@ void FO2unEditorToolModule::OnMenuClicked()
                         .AutoHeight()
                         .Padding(0, 0, 0, 10)
                         [
-                            SNew(SButton)
-                                .Text(FText::FromString(L"테스트"))
-                                .OnClicked_Lambda([this]() -> FReply {
-                                O2un::FExcelHelper::Testt(UO2unProjectSettings::Get().RawExcelDirectory.Path);
-                                return FReply::Handled();
-                                    })
+                            SNew(SVerticalBox)
+                                + SVerticalBox::Slot()
+                                .AutoHeight()
+                                .Padding(2.0f)
+                                [
+                                    SNew(SButton)
+                                        .Text(FText::FromString(L"데이터 스크립트 생성"))
+                                        .OnClicked_Lambda([this]() -> FReply {
+                                        if (GEditor)
+                                        {
+                                            if(auto* helper = GEditor->GetEditorSubsystem<UExcelHelperSubsystem>())
+                                            {
+                                                helper->GenerateDataScript();
+                                            }
+                                        }
+                                        return FReply::Handled();
+                                            })
+                                ]
+                            + SVerticalBox::Slot()
+                                .AutoHeight()
+                                .Padding(2.0f)
+                                [
+                                    SNew(SButton)
+                                        .Text(FText::FromString(L"데이터 에셋 로드"))
+                                        .OnClicked_Lambda([this]() -> FReply {
+                                        if (GEditor)
+                                        {
+                                            if (auto* helper = GEditor->GetEditorSubsystem<UExcelHelperSubsystem>())
+                                            {
+                                                helper->GenerateAllDataAsset();
+                                            }
+                                        }
+                                        return FReply::Handled();
+                                            })
+                                ]
+                            + SVerticalBox::Slot()
+                                .AutoHeight()
+                                .Padding(2.0f)
+                                [
+                                    SNew(SButton)
+                                        .Text(FText::FromString(L"엑셀 리스트 로드"))
+                                        .OnClicked_Lambda([this]() -> FReply {
+                                        if (GEditor)
+                                        {
+                                            if (auto* helper = GEditor->GetEditorSubsystem<UExcelHelperSubsystem>())
+                                            {
+                                                helper->LoadAllExcelFileList();
+                                            }
+                                        }
+                                        return FReply::Handled();
+                                            })
+                                ]
                         ]
                         + SVerticalBox::Slot()
                         .FillHeight(1.0f)

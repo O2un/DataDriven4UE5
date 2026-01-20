@@ -4,10 +4,13 @@
 #include "StaticDataKey.h"
 #include "StaticDataBase.generated.h"
 
+USTRUCT()
 struct FStaticDataInitStruct
 {
+	GENERATED_BODY()
+
+	UPROPERTY()
 	FStaticDataKey _key;
-	virtual ~FStaticDataInitStruct() = default;
 };
 
 UCLASS(Abstract, BlueprintType)

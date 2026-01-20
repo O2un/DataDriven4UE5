@@ -18,3 +18,13 @@ void GenerateAllDataClass(const char* root)
 {
 	ExcelLoader::Instance().GenerateAllDataClass(root);
 }
+
+const char* LoadExcel(const char* path, const char* className)
+{
+	return ExcelLoader::Instance().LoadExcel(path, className);
+}
+
+const char* GetExcelList(const char* root)
+{
+	return ExcelLoader::Instance().GetExcelList(root);
+}

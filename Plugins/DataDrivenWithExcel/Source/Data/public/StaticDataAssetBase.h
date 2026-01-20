@@ -16,6 +16,9 @@ class O2UNDATAHELPER_API UStaticDataAssetBase : public UDataAsset
 {
 	GENERATED_BODY()
 
+public:
+	void Load(const char* json, FString InDataClass);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Instanced, Category = "StaticData", meta = (ShowOnlyInnerProperties))
 	TMap<FStaticDataKey, UStaticDataBase*> _dataList;

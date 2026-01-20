@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClCompile Include="sources\CodeGenerator.cpp" />
     <ClCompile Include="sources\CodeGenerator.ixx" />
+    <ClCompile Include="sources\CommonType.ixx" />
     <ClCompile Include="sources\ContainerHelper.ixx" />
     <ClCompile Include="sources\ExcelHelper.cpp" />
     <ClCompile Include="sources\ExcelLoader.cpp" />
     <ClCompile Include="sources\IExcelLoader.ixx" />
+    <ClCompile Include="sources\JsonParser.cpp" />
+    <ClCompile Include="sources\JsonParser.ixx" />
     <ClCompile Include="sources\Logger.ixx" />
     <ClCompile Include="sources\Singleton.ixx" />
     <ClCompile Include="sources\StringHelper.ixx" />

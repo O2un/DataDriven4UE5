@@ -33,6 +33,12 @@ public class O2unExcelHelper : ModuleRules
                 "O2unCore",
                 "O2unDataHelper",
                 "GameProjectGeneration",
+                "AssetTools",
+                "AssetRegistry",
+                "UnrealEd",
+                "EditorSubsystem",
+                "Json",
+                "JsonUtilities",
             }
             );
 

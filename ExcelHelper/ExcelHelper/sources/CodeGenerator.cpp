@@ -160,7 +160,7 @@ CodeGenerator::GeneratedCodeResult CodeGenerator::BuildValuesSection(const OpenX
 
         result.properties += "\tUPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = \"StaticData\")\n";
         result.properties += std::format("\t{} _{};\n\n", MapToCppType(colType), colName);
-        result.inits += std::format("\t{} _{};\n", MapToCppType(colType), colName);
+        result.inits += std::format("\tUPROPERTY()\n\t{} _{};\n", MapToCppType(colType), colName);
         result.assigns += std::format("\t_{} = initor._{};\n", colName ,colName);
     }
 

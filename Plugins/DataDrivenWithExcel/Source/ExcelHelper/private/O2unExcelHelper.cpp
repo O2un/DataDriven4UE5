@@ -6,7 +6,6 @@
 #include "ExcelHelper.h"
 #include "O2unDllHelper.h"
 #include "O2unProjectSettings.h"
-#include "GameProjectGenerationModule.h"
 
 void FO2unExcelHelperModule::StartupModule()
 {
@@ -27,15 +26,3 @@ void FO2unExcelHelperModule::ShutdownModule()
 #undef LOCTEXT_NAMESPACE
 
 IMPLEMENT_MODULE(FO2unExcelHelperModule, O2unExcelHelper)
-
-namespace O2un
-{
-	void FExcelHelper::Testt(FString dataRoot)
-	{
-		GenerateAllDataClass(TCHAR_TO_UTF8(*dataRoot));
-
-		FText out, fail;
-		FGameProjectGenerationModule& GPGenModule = FModuleManager::LoadModuleChecked<FGameProjectGenerationModule>(TEXT("GameProjectGeneration"));
-		GPGenModule.UpdateCodeProject(fail, out);
-	}
-}

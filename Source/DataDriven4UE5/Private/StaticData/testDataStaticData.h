@@ -10,9 +10,14 @@
  * Auto-generated Static Data Class
  * 수정 금지: 엑셀 파서에 의해 자동 생성된 파일입니다.
  */
-struct FtestDataInitStruct : FStaticDataInitStruct
+USTRUCT()
+struct FtestDataInitStruct : public FStaticDataInitStruct
 {
+GENERATED_BODY()
+
+UPROPERTY()
 	int32 _data;
+UPROPERTY()
 	float _value;
 
 };

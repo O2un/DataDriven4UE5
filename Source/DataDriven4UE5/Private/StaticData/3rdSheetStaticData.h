@@ -10,8 +10,12 @@
  * Auto-generated Static Data Class
  * 수정 금지: 엑셀 파서에 의해 자동 생성된 파일입니다.
  */
-struct F3rdSheetInitStruct : FStaticDataInitStruct
+USTRUCT()
+struct F3rdSheetInitStruct : public FStaticDataInitStruct
 {
+GENERATED_BODY()
+
+UPROPERTY()
 	FString _data;
 
 };
