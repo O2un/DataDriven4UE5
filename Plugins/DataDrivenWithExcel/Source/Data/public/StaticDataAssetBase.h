@@ -19,6 +19,13 @@ class O2UNDATAHELPER_API UStaticDataAssetBase : public UDataAsset
 public:
 	void Load(const char* json, FString InDataClass);
 
+#if WITH_EDITOR
+	UFUNCTION(CallInEditor, Category = "Visualizer")
+	void OpenVisualizer();
+    void EnumerateData(TFunctionRef<void(const UStaticDataBase*)> Visitor) const;
+	UClass* GetDataClass() const;
+#endif
+
 protected:
 	UPROPERTY(VisibleAnywhere, Instanced, Category = "StaticData", meta = (ShowOnlyInnerProperties))
 	TMap<FStaticDataKey, UStaticDataBase*> _dataList;

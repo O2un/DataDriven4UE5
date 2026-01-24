@@ -4,6 +4,10 @@
 #include "StaticDataAssetBase.h"
 #include <JsonObjectConverter.h>
 
+#if WITH_EDITOR
+#include "SStaticDataVisualizer.h"
+#endif
+
 void UStaticDataAssetBase::Load(const char* json, FString name)
 {
 	FString jsonString = UTF8_TO_TCHAR(json);
@@ -60,3 +64,40 @@ void UStaticDataAssetBase::Load(const char* json, FString name)
 		}
 	}
 }
+
+#if WITH_EDITOR
+void UStaticDataAssetBase::OpenVisualizer()
+{
+	TSharedRef<SWindow> VisualizerWindow = SNew(SWindow)
+		.Title(FText::FromString(TEXT("Data Visualizer")))
+		.ClientSize(FVector2D(800, 600))
+		.SupportsMaximize(true)
+		.SupportsMinimize(true)
+		[
+			SNew(SStaticDataVisualizer)
+				.TargetAsset(this)
+		];
+
+	FSlateApplication::Get().AddWindow(VisualizerWindow);
+}
+
+void UStaticDataAssetBase::EnumerateData(TFunctionRef<void(const UStaticDataBase*)> Visitor) const
+{
+	for (const auto& Pair : _dataList)
+	{
+		if (Pair.Value)
+		{
+			Visitor(Pair.Value);
+		}
+	}
+}
+
+UClass* UStaticDataAssetBase::GetDataClass() const
+{
+	if (_dataList.Num() > 0)
+	{
+		return _dataList.CreateConstIterator().Value()->GetClass();
+	}
+	return nullptr;
+}
+#endif
