@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -58,7 +60,7 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include "XLCell.hpp"
 #include "XLCellReference.hpp"
 #include "XLIterator.hpp"
-#include "XLXmlParser.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 namespace OpenXLSX
 {
@@ -66,8 +68,11 @@ namespace OpenXLSX
      * @brief locate the XML row node within sheetDataNode for the row at rowNumber
      * @param sheetDataNode the XML sheetData node to search in
      * @param rowNumber the number of the row to locate
+     * @param hintRowNode (optional) XMLNode for a row with a number lower or equal rowNumber, to start forward search for rowNumber
      * @return the XMLNode pointing to the row, or an empty XMLNode if the row does not exist
+     * @note the overload without the optional parameter serves as a workaround because XMLNode definition is not known in this header file
      */
+    XMLNode findRowNode(XMLNode sheetDataNode, uint32_t rowNumber, XMLNode hintRowNode);
     XMLNode findRowNode(XMLNode sheetDataNode, uint32_t rowNumber);
 
     /**
@@ -137,6 +142,13 @@ namespace OpenXLSX
          */
         void updateCurrentCell(bool createIfMissing);
 
+        /**
+         * @brief private implementation to calculate a distance between this iterator and last - invoked by distance and rdistance
+         * @param last
+         * @return positive distance if last >= *this, otherwise negative
+         */
+        int64_t distance_impl(const XLCellIterator& last);
+
     public:     // ===== Switch back to public methods
         /**
          * @brief
@@ -149,6 +161,18 @@ namespace OpenXLSX
          * @return
          */
         XLCellIterator operator++(int);    // NOLINT
+
+        /**
+         * @brief
+         * @return
+         */
+        XLCellIterator& operator--();
+
+        /**
+         * @brief
+         * @return
+         */
+        XLCellIterator operator--(int);    // NOLINT
 
         /**
          * @brief
@@ -183,6 +207,13 @@ namespace OpenXLSX
         bool cellExists();
 
         /**
+         * @brief erase the current cell if it exists
+         * @return true if a cell was deleted, false if cell did not exist
+         * @warning this will break all existing references to that cell (formulas etc), as well as potentially merged cell ranges - use at your own risk
+         */
+        bool eraseCell();
+
+        /**
          * @brief determine whether iterator is at 1 beyond the last cell in range
          * @return
          * @note 28-07-2024: Removed const from return type (Troldal)
@@ -197,6 +228,25 @@ namespace OpenXLSX
         uint64_t distance(const XLCellIterator& last);
 
         /**
+         * @brief
+         * @param first
+         * @return
+         */
+        uint64_t rdistance(const XLCellIterator& first);
+
+        /**
+         * @brief getter function for current row
+         * @return
+         */
+        uint32_t row() const { return (m_endReached ? m_bottomRight.row() : m_currentRow); }
+
+        /**
+         * @brief getter function for current column
+         * @return
+         */
+        uint16_t column() const { return (m_endReached ? m_bottomRight.column() + 1 : m_currentColumn); }
+
+        /**
          * @brief get the XLCellReference::address corresponding to the current iterator position
          * @return an XLCellReference::address, with m_bottomRight.col() + 1 for the beyond-the-end iterator
          * @note 28-07-2024: Removed const from return type (Troldal)
@@ -209,8 +259,13 @@ namespace OpenXLSX
         XLCellReference          m_bottomRight;          /**< The cell reference of the last cell in the range */
         XLSharedStringsRef       m_sharedStrings;        /**< */
         bool                     m_endReached;           /**< */
-        XMLNode                  m_hintNode;             /**< The cell node of the last existing cell found up to current iterator position */
+        std::unique_ptr<XMLNode> m_hintNode;             /**< The cell node of the last existing cell found up to current iterator position */
         uint32_t                 m_hintRow;              /**<   the row number for m_hintCell */
+        uint16_t                 m_hintColumn;           /**<   the column number for m_hintCell */
+        std::unique_ptr<XMLNode> m_hintRowNode;          /**< The row node (parent) for the last existing cell found up to current iterator position */
+        // NOTE: m_hintRowNode is a pure optimization fallback for findRowNode, used in combination with eraseCell: if the first cell in a row is deleted,
+        //        updateCurrentCell can use m_hintRowNode as a reference to find the current cell from there
+
         XLCell                   m_currentCell;          /**< The cell to which the iterator is currently pointing, if it exists, otherwise an empty XLCell */
         static constexpr const int XLNotLoaded  = 0;    // code readability for m_currentCellStatus
         static constexpr const int XLNoSuchCell = 1;    //   "
@@ -221,13 +276,161 @@ namespace OpenXLSX
         std::vector<XLStyleIndex> const * m_colStyles;
     };
 
+    class OPENXLSX_EXPORT XLCellReverseIterator
+    {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type        = XLCell;
+        using difference_type   = int64_t;
+        using pointer           = XLCell*;
+        using reference         = XLCell&;
+
+        /**
+         * @brief
+         * @param cellRange
+         * @param loc
+         * @param colStyles is an optional vector with all column styles configured for the worksheet when the iterator is created.
+         *                  This vector - if provided - will be used to get default cell styles for newly created cells, instead of performing
+         *                   a potentially expensive lookup in <cols>
+         */
+        explicit XLCellReverseIterator(const XLCellRange& cellRange, XLIteratorLocation loc, std::vector<XLStyleIndex> const * colStyles);
+
+        /**
+         * @brief
+         */
+        ~XLCellReverseIterator();
+
+        /**
+         * @brief
+         * @param other
+         */
+        XLCellReverseIterator(const XLCellReverseIterator& other);
+
+        /**
+         * @brief
+         * @param other
+         */
+        [[maybe_unused]] XLCellReverseIterator(XLCellReverseIterator&& other) noexcept;
+
+        /**
+         * @brief
+         * @param other
+         * @return
+         */
+        XLCellReverseIterator& operator=(const XLCellReverseIterator& other);
+
+        /**
+         * @brief
+         * @param other
+         * @return
+         */
+        XLCellReverseIterator& operator=(XLCellReverseIterator&& other) noexcept;
+
+        /**
+         * @brief
+         * @return
+         */
+        XLCellReverseIterator& operator++();
+
+        /**
+         * @brief
+         * @return
+         */
+        XLCellReverseIterator operator++(int);    // NOLINT
+
+        /**
+         * @brief
+         * @return
+         */
+        reference operator*();
+
+        /**
+         * @brief
+         * @return
+         */
+        pointer operator->();
+
+        /**
+         * @brief
+         * @param rhs
+         * @return
+         */
+        bool operator==(const XLCellReverseIterator& rhs) const;
+
+        /**
+         * @brief
+         * @param rhs
+         * @return
+         */
+        bool operator!=(const XLCellReverseIterator& rhs) const;
+
+        bool cellExists()           { return m_XLCellIterator.cellExists(); }
+        bool eraseCell()            { return m_XLCellIterator.eraseCell(); }
+
+        /**
+         * @brief determine whether iterator is at 1 before the first cell in range
+         * @return
+         */
+        bool endReached() const { return m_beginReached; }
+
+        /**
+         * @brief
+         * @param last
+         * @return
+         */
+        uint64_t distance(const XLCellReverseIterator& last);
+
+        /**
+         * @brief
+         * @param first
+         * @return
+         */
+        uint64_t rdistance(const XLCellReverseIterator& first);
+
+        /**
+         * @brief get the XLCellReference::address corresponding to the current iterator position
+         * @return an XLCellReference::address, with m_topLeft.col() - 1 for the beyond-the-end iterator
+         * @note this function can yield an invalid cell address (col '-') if endReached() == true && topLeft.col() == 1
+         */
+        std::string address() const;
+
+        /**
+         * @brief getter function for current row
+         * @return
+         */
+        uint32_t row() const { return m_XLCellIterator.row(); }
+
+        /**
+         * @brief getter function for current column -> return an invalid column value 0 if range begins on column 1
+         * @return
+         */
+        uint16_t column() const { return m_XLCellIterator.column() - (m_beginReached ? 1 : 0); }
+
+
+    private:
+           XLCellIterator m_XLCellIterator;                 /**< use a regular XLCellIterator under the hood */
+           bool           m_beginReached;                   /**< set to true if iterator position has been advanced to the reverse end == "one before" the range begin */
+    };
+
     /**
-     * @brief      ostream output of XLIterator position as XLCellReference::address
+     * @brief      ostream output of XLCellIterator position as XLCellReference::address
      * @param os   the ostream destination
-     * @param it    the XLIterator whose position to send to the stream
+     * @param it    the XLCellIterator whose position to send to the stream
      * @return
      */
     inline std::ostream& operator<<(std::ostream& os, const XLCellIterator& it)
+    {
+        os << it.address();
+        return os;
+    }
+
+    /**
+     * @brief      ostream output of XLCellReverseIterator position as XLCellReference::address
+     * @param os   the ostream destination
+     * @param it    the XLCellReverseIterator whose position to send to the stream
+     * @return
+     */
+    inline std::ostream& operator<<(std::ostream& os, const XLCellReverseIterator& it)
     {
         os << it.address();
         return os;

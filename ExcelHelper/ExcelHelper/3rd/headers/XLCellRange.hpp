@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -60,7 +62,8 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include "XLCell.hpp"
 #include "XLCellIterator.hpp"
 #include "XLCellReference.hpp"
-#include "XLXmlParser.hpp"
+#include "XLSharedStrings.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 namespace OpenXLSX
 {
@@ -71,12 +74,15 @@ namespace OpenXLSX
     class OPENXLSX_EXPORT XLCellRange
     {
         friend class XLCellIterator;
+        friend class XLCellReverseIterator;
 
         //----------------------------------------------------------------------------------------------------------------------
         //           Public Member Functions
         //----------------------------------------------------------------------------------------------------------------------
 
     public:
+        typedef XLCellReverseIterator reverse_iterator; // to be used by templated class XLReverseRange
+
         /**
          * @brief Default constructor for variable declaration
          */
@@ -97,29 +103,24 @@ namespace OpenXLSX
         /**
          * @brief Copy constructor
          * @param other The range object to be copied.
-         * @note This implements the default copy constructor, i.e. memberwise copying.
          */
         XLCellRange(const XLCellRange& other);
 
         /**
-         * @brief Move constructor
+         * @brief Move constructor [default]
          * @param other The range object to be moved.
-         * @note This implements the default move constructor, i.e. memberwise move.
          */
         XLCellRange(XLCellRange&& other) noexcept;
 
         /**
          * @brief Destructor [default]
-         * @note This implements the default destructor.
          */
         ~XLCellRange();
 
         /**
-         * @brief The copy assignment operator [default]
+         * @brief The copy assignment operator
          * @param other The range object to be copied and assigned.
-         * @return A reference to the new object.
-         * @throws A std::range_error if the source range and destination range are of different size and shape.
-         * @note This implements the default copy assignment operator.
+         * @return reference to the new object.
          */
         XLCellRange& operator=(const XLCellRange& other);
 
@@ -127,7 +128,6 @@ namespace OpenXLSX
          * @brief The move assignment operator [default].
          * @param other The range object to be moved and assigned.
          * @return A reference to the new object.
-         * @note This implements the default move assignment operator.
          */
         XLCellRange& operator=(XLCellRange&& other) noexcept;
 
@@ -180,6 +180,18 @@ namespace OpenXLSX
         XLCellIterator end() const;
 
         /**
+         * @brief provide a means to reverse-iterate through a cell range
+         * @return the reverse begin of the range (iterator to the last cell in the range)
+         */
+        XLCellReverseIterator rbegin() const;
+
+        /**
+         * @brief provide a means to reverse-iterate through a cell range
+         * @return the reverse end of the range (iterator to 1 before the first cell in the range)
+         */
+        XLCellReverseIterator rend() const;
+
+        /**
          * @brief
          */
         void clear();
@@ -208,6 +220,13 @@ namespace OpenXLSX
          * @returns true on success, false on failure
          */
         bool setFormat(XLStyleIndex cellFormatIndex);
+
+        /**
+         * @brief erase all cell XML content in range
+         * @return amount of cell XML nodes actually erased (0 if none)
+         * @warning this will break all existing references to the range (formulas etc), as well as potentially merged cell ranges - use at your own risk
+         */
+        uint64_t eraseRange();
 
         //----------------------------------------------------------------------------------------------------------------------
         //           Private Member Variables

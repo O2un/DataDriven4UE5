@@ -75,3 +75,6 @@ Plugins/**/Intermediate/*
 DerivedDataCache/*
 ExcelHelper/x64
 ExcelHelper/ExcelHelper/x64
+
+# prebuilt OpenXLSX v0.5.2 static lib (miniz/nowide/pugixml merged)
+!ExcelHelper/ExcelHelper/3rd/OpenXLSX.lib

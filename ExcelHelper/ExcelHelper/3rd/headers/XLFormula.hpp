@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -53,13 +55,13 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #endif // _MSC_VER
 
 // ===== External Includes ===== //
-#include <iostream>
+#include <iostream> // std::ostream
 #include <string>
 #include <variant>
 
 // ===== OpenXLSX Includes ===== //
 #include "OpenXLSX-Exports.hpp"
-#include "XLXmlParser.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 // ========== CLASS AND ENUM TYPE DEFINITIONS ========== //
 namespace OpenXLSX
@@ -206,6 +208,26 @@ namespace OpenXLSX
         friend class XLCell;
         friend class XLFormula;
 
+    private:
+        /**
+         * @brief Constructor, taking pointers to the cell and cell node objects.
+         * @param cell Pointer to the associated cell object.
+         * @param cellNode Pointer to the associated cell node object.
+         */
+        XLFormulaProxy(XLCell* cell, XMLNode* cellNode);
+
+        /**
+         * @brief Copy constructor.
+         * @param other Object to be copied.
+         */
+        XLFormulaProxy(const XLFormulaProxy& other);
+
+        /**
+         * @brief Move constructor.
+         * @param other Object to be moved.
+         */
+        XLFormulaProxy(XLFormulaProxy&& other) noexcept;
+
     public:
         /**
          * @brief Destructor
@@ -219,6 +241,15 @@ namespace OpenXLSX
          */
         XLFormulaProxy& operator=(const XLFormulaProxy& other);
 
+    private:
+        /**
+         * @brief Move assignment operator.
+         * @param other Object to be moved.
+         * @return A reference to the moved-to object.
+         */
+        XLFormulaProxy& operator=(XLFormulaProxy&& other) noexcept;
+
+    public:
         /**
          * @brief Templated assignment operator, taking a string-type argument.
          * @tparam T Type of argument.
@@ -283,32 +314,6 @@ namespace OpenXLSX
         operator XLFormula() const;    // NOLINT
 
     private:
-        /**
-         * @brief Constructor, taking pointers to the cell and cell node objects.
-         * @param cell Pointer to the associated cell object.
-         * @param cellNode Pointer to the associated cell node object.
-         */
-        XLFormulaProxy(XLCell* cell, XMLNode* cellNode);
-
-        /**
-         * @brief Copy constructor.
-         * @param other Object to be copied.
-         */
-        XLFormulaProxy(const XLFormulaProxy& other);
-
-        /**
-         * @brief Move constructor.
-         * @param other Object to be moved.
-         */
-        XLFormulaProxy(XLFormulaProxy&& other) noexcept;
-
-        /**
-         * @brief Move assignment operator.
-         * @param other Object to be moved.
-         * @return A reference to the moved-to object.
-         */
-        XLFormulaProxy& operator=(XLFormulaProxy&& other) noexcept;
-
         /**
          * @brief Set the formula to the given string.
          * @param formulaString String holding the formula.

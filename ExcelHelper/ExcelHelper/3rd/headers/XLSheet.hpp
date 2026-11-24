@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -80,6 +82,9 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 namespace OpenXLSX
 {
     constexpr const bool XLEmptyHiddenCells = true; // readability constant for XLWorksheet::mergeCells parameter emptyHiddenCells
+
+    constexpr const bool XLCalculateLastCell        = true;     // readability constant for XLWorksheet::setDimension parameter autoCalculateLastCell
+    constexpr const bool XLDoNotCalculateLastCell   = false;    //   "
 
     /**
      * @brief The XLSheetState is an enumeration of the possible (visibility) states, e.g. Visible or Hidden.
@@ -414,6 +419,100 @@ namespace OpenXLSX
 
 
     // ================================================================================
+    // XLSheetFormatProperties Class
+    // ================================================================================
+
+    /**
+     * @brief An encapsulation of a sheetFormatPr item
+     */
+    class OPENXLSX_EXPORT XLSheetFormatProperties {
+    public:
+        /**
+         * @brief
+         */
+        XLSheetFormatProperties();
+
+        /**
+         * @brief Constructor. New items should only be created through an XLWorksheet object.
+         * @param node An XMLNode object with the <sheetFormatPr> item. If no input is provided, a null node is used.
+         */
+        explicit XLSheetFormatProperties(const XMLNode& node);
+
+        /**
+         * @brief Copy Constructor.
+         * @param other Object to be copied.
+         */
+        XLSheetFormatProperties(const XLSheetFormatProperties& other);
+
+        /**
+         * @brief Move Constructor.
+         * @param other Object to be moved.
+         */
+        XLSheetFormatProperties(XLSheetFormatProperties&& other) noexcept;
+
+        /**
+         * @brief
+         */
+        ~XLSheetFormatProperties();
+
+        /**
+         * @brief Copy assignment operator.
+         * @param other Right hand side of assignment operation.
+         * @return A reference to the lhs object.
+         */
+        XLSheetFormatProperties& operator=(const XLSheetFormatProperties& other);
+
+        /**
+         * @brief Move assignment operator.
+         * @param other Right hand side of assignment operation.
+         * @return A reference to lhs object.
+         */
+        XLSheetFormatProperties& operator=(XLSheetFormatProperties&& other) noexcept;
+
+        /**
+         * @brief Test if this is an empty node
+         * @return true if underlying XMLNode is empty
+         */
+        bool empty() const;
+
+        /**
+         * @brief Attribute getter functions
+         */
+        uint16_t baseColWidth() const;
+        double   defaultColWidth() const;
+        double   defaultRowHeight() const;
+        bool     customHeight() const;
+        bool     zeroHeight() const;
+        bool     thickTop() const;
+        bool     thickBottom() const;
+        uint8_t  outlineLevelRow() const;
+        uint8_t  outlineLevelCol() const;
+
+        /**
+         * @brief Attribute setter functions
+         */
+        bool setBaseColWidth(uint16_t baseColWidth = 8);
+        bool setDefaultColWidth(double defaultColWidth);
+        bool setDefaultRowHeight(double defaultRowHeight);
+        bool setCustomHeight(bool set = true);
+        bool setZeroHeight(bool set = true);
+        bool setThickTop(bool set = true);
+        bool setThickBottom(bool set = true);
+        bool setOutlineLevelRow(uint8_t outlineLevelRow);
+        bool setOutlineLevelCol(uint8_t outlineLevelCol);
+
+        /**
+         * @brief Return a string summary of the sheetFormatPr properties
+         * @return string with info about the sheetFormatPr object
+         */
+        std::string summary() const;
+
+    private:                                    // ---------- Private Member Variables ---------- //
+        std::unique_ptr<XMLNode> m_sheetFormatPrNode;  /**< An XMLNode object with the sheet format properties item */
+    };
+
+
+    // ================================================================================
     // XLConditionalFormats Class
     // ================================================================================
 
@@ -445,7 +544,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLCfRule(XLCfRule&& other) noexcept = default;
+        XLCfRule(XLCfRule&& other) noexcept;
 
         /**
          * @brief
@@ -464,7 +563,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCfRule& operator=(XLCfRule&& other) noexcept = default;
+        XLCfRule& operator=(XLCfRule&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -575,7 +674,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLCfRules(XLCfRules&& other) noexcept = default;
+        XLCfRules(XLCfRules&& other) noexcept;
 
         /**
          * @brief
@@ -594,7 +693,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCfRules& operator=(XLCfRules&& other) noexcept = default;
+        XLCfRules& operator=(XLCfRules&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -693,7 +792,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLConditionalFormat(XLConditionalFormat&& other) noexcept = default;
+        XLConditionalFormat(XLConditionalFormat&& other) noexcept;
 
         /**
          * @brief
@@ -712,7 +811,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLConditionalFormat& operator=(XLConditionalFormat&& other) noexcept = default;
+        XLConditionalFormat& operator=(XLConditionalFormat&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -812,7 +911,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLConditionalFormats& operator=(XLConditionalFormats&& other) noexcept = default;
+        XLConditionalFormats& operator=(XLConditionalFormats&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -885,12 +984,9 @@ namespace OpenXLSX
         explicit XLWorksheet(XLXmlData* xmlData);
 
         /**
-         * @brief Destructor.
-         */
-        ~XLWorksheet() = default;
-
-        /**
          * @brief Copy Constructor.
+         * @warning Use comments() and vmlDrawing() with extreme caution: the underlying XLVmlDrawing class manages the last assigned shape id, and *will* create invalid XML
+         *   if two separate variables are used to create VML drawings or comments within the same worksheet
          */
         XLWorksheet(const XLWorksheet& other);
 
@@ -900,7 +996,14 @@ namespace OpenXLSX
         XLWorksheet(XLWorksheet&& other);
 
         /**
+         * @brief Destructor.
+         */
+        ~XLWorksheet();
+
+        /**
          * @brief Copy assignment operator.
+         * @warning Use comments() and vmlDrawing() with extreme caution: the underlying XLVmlDrawing class manages the last assigned shape id, and *will* create invalid XML
+         *   if two separate variables are used to create VML drawings or comments within the same worksheet
          */
         XLWorksheet& operator=(const XLWorksheet& other);
 
@@ -955,6 +1058,44 @@ namespace OpenXLSX
          *           it is better to use an XLCellIterator with the cell range of interest.
          */
         XLCellAssignable findCell(uint32_t rowNumber, uint16_t columnNumber) const;
+
+        /**
+         * @brief Set the worksheet's <dimension> tag, attribute ref
+         * @param topLeft top left cell for the dimension tag. If left empty, will use A1
+         * @param bottomRight bottom right cell to use for the dimension tag. If left empty, or equivalent "A1", will use lastCell()
+         * @param autoCalculateLastCell if false, disables auto-calculation of last cell for bottomRight
+         * @note if bottomRight is "A1", invoke lastCell to determine dimension range - can be disabled by passing XLDoNotCalculateLastCell for autoCalculateLastCell
+         * @note serves as root function for two overloads
+         * @warning for now, invoking a new XLWorksheet constructor will delete the <dimension> tag again (preferring no tag over a wrong one). This function should only be invoked directly before a save operation.
+         * @return
+         */
+        void setDimension(XLCellReference topLeft = XLCellReference("A1"), XLCellReference bottomRight = XLCellReference{}, bool autoCalculateLastCell = XLCalculateLastCell);
+
+        /**
+         * @brief overload for setDimension(XLCellReference topLeft, XLCellReference bottomRight)
+         * @param topLeft address of the top left cell for dimension
+         * @param bottomRight address of the bottom right cell for dimension
+         * @note as in the root setDimension function, providing "A1" for bottomRight invokes auto-calculation of last cell
+         * @warning see root setDimension function
+         * @return
+         */
+        void setDimension(std::string topLeft, std::string bottomRight);
+
+        /**
+         * @brief overload for setDimension(XLCellReference topLeft, XLCellReference bottomRight)
+         * @param dimension range address to use as dimension
+         * @note while setting "A1:A1" still allows auto-calculation of last cell, this overload also allows setting a *single* dimension "A1", by invoking the root setDimension function with XLDoNotCalculateLastCell
+         * @warning see root setDimension function
+         * @return
+         */
+        void setDimension(std::string dimension);
+
+        /**
+         * @brief get the worksheet format properties stored under sheetFormatPr
+         * @param createIfMissing when true, if sheetFormatPr object is missing, create it; otherwise (XLDoNotCreate) return an empty object
+         * @return XLSheetFormatProperties class
+         */
+        XLSheetFormatProperties sheetFormatProperties(bool createIfMissing = XLCreateIfMissing);
 
         /**
          * @brief Get a range for the area currently in use (i.e. from cell A1 to the last cell being in use).
@@ -1019,14 +1160,14 @@ namespace OpenXLSX
          * @param columnNumber The number of the column to retrieve.
          * @return A reference to the XLColumn object.
          */
-        XLColumn column(uint16_t columnNumber) const;
+        XLColumn column(uint16_t columnNumber);
 
         /**
          * @brief Get the column with the given column reference
          * @param columnRef The letters referencing the given column
          * @return A reference to the XLColumn object.
          */
-        XLColumn column(std::string const& columnRef) const;
+        XLColumn column(std::string const& columnRef);
 
         /**
          * @brief Get an XLCellReference to the last (bottom right) cell in the worksheet.
@@ -1099,8 +1240,8 @@ namespace OpenXLSX
          * @param column The column letter(s) or index (1-based)
          * @returns The index of the applicable format style
          */
-        XLStyleIndex getColumnFormat(uint16_t column) const;
-        XLStyleIndex getColumnFormat(const std::string& column) const;
+        XLStyleIndex getColumnFormat(uint16_t column);
+        XLStyleIndex getColumnFormat(const std::string& column);
 
         /**
          * @brief set the column style as a reference to the array index of xl/styles.xml:<styleSheet>:<cellXfs>
@@ -1337,40 +1478,40 @@ namespace OpenXLSX
         XLChartsheet() : XLSheetBase(nullptr) {};
 
         /**
-         * @brief
+         * @brief Constructor
          * @param xmlData
          */
         explicit XLChartsheet(XLXmlData* xmlData);
 
         /**
-         * @brief
+         * @brief Copy constructor
          * @param other
          */
-        XLChartsheet(const XLChartsheet& other) = default;
+        XLChartsheet(const XLChartsheet& other);
 
         /**
-         * @brief
+         * @brief Move constructor
          * @param other
          */
-        XLChartsheet(XLChartsheet&& other) noexcept = default;
+        XLChartsheet(XLChartsheet&& other) noexcept;
 
         /**
-         * @brief
+         * @brief Destructor
          */
         ~XLChartsheet();
 
         /**
-         * @brief
+         * @brief Copy assignment operator
          * @return
          */
-        XLChartsheet& operator=(const XLChartsheet& other) = default;
+        XLChartsheet& operator=(const XLChartsheet& other);
 
         /**
-         * @brief
+         * @brief Move assignment operator
          * @param other
          * @return
          */
-        XLChartsheet& operator=(XLChartsheet&& other) noexcept = default;
+        XLChartsheet& operator=(XLChartsheet&& other) noexcept;
 
     private:
 
@@ -1428,37 +1569,37 @@ namespace OpenXLSX
         explicit XLSheet(XLXmlData* xmlData);
 
         /**
-         * @brief The copy constructor.
+         * @brief Copy constructor.
          * @param other The object to be copied.
          * @note The default copy constructor is used, i.e. only shallow copying of pointer data members.
          */
-        XLSheet(const XLSheet& other) = default;
+        XLSheet(const XLSheet& other);
 
         /**
-         * @brief
+         * @brief Move constructor
          * @param other
          */
-        XLSheet(XLSheet&& other) noexcept = default;
+        XLSheet(XLSheet&& other) noexcept;
 
         /**
          * @brief The destructor
          * @note The default destructor is used, since cleanup of pointer data members is not required.
          */
-        ~XLSheet() = default;
+        ~XLSheet();
 
         /**
-         * @brief Assignment operator
+         * @brief Copy assignment operator
          * @return A reference to the new object.
          * @note The default assignment operator is used, i.e. only shallow copying of pointer data members.
          */
-        XLSheet& operator=(const XLSheet& other) = default;
+        XLSheet& operator=(const XLSheet& other);
 
         /**
-         * @brief
+         * @brief Move assignment operator
          * @param other
          * @return
          */
-        XLSheet& operator=(XLSheet&& other) noexcept = default;
+        XLSheet& operator=(XLSheet&& other) noexcept;
 
         /**
          * @brief Method for getting the current visibility state of the sheet.

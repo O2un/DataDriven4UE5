@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -89,7 +91,7 @@ namespace OpenXLSX
         /**
          * @brief Default constructor. Creates an empty ('null') XLWorkbook object.
          */
-        XLWorkbook() = default;
+        XLWorkbook();
 
         /**
          * @brief Constructor. Takes a pointer to an XLXmlData object (stored in the parent XLDocument object).
@@ -103,14 +105,14 @@ namespace OpenXLSX
          * @param other The XLWorkbook object to be copied.
          * @note The copy constructor has been explicitly defaulted.
          */
-        XLWorkbook(const XLWorkbook& other) = default;
+        XLWorkbook(const XLWorkbook& other);
 
         /**
          * @brief Move constructor.
          * @param other The XLWorkbook to be moved.
          * @note The move constructor has been explicitly defaulted.
          */
-        XLWorkbook(XLWorkbook&& other) = default;
+        XLWorkbook(XLWorkbook&& other);
 
         /**
          * @brief Destructor
@@ -124,7 +126,7 @@ namespace OpenXLSX
          * @return A reference to *this
          * @note The copy assignment operator has been explicitly deleted, as XLWorkbook objects should not be copied.
          */
-        XLWorkbook& operator=(const XLWorkbook& other) = default;
+        XLWorkbook& operator=(const XLWorkbook& other);
 
         /**
          * @brief Move assignment operator.
@@ -132,7 +134,7 @@ namespace OpenXLSX
          * @return A reference to *this
          * @note The move assignment operator has been explicitly deleted, as XLWorkbook objects should not be moved.
          */
-        XLWorkbook& operator=(XLWorkbook&& other) = default;
+        XLWorkbook& operator=(XLWorkbook&& other);
 
         /**
          * @brief Get the sheet (worksheet or chartsheet) at the given index.

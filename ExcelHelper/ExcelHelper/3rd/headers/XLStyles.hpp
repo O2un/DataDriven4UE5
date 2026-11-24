@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -62,7 +64,7 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include "OpenXLSX-Exports.hpp"
 #include "XLColor.hpp"
 #include "XLXmlFile.hpp"
-#include "XLXmlParser.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 namespace OpenXLSX
 {
@@ -105,6 +107,7 @@ namespace OpenXLSX
     class XLNumberFormats;
     class XLFont;
     class XLFonts;
+    class XLDataBarColor;
     class XLFill;
     class XLFills;
     class XLLine;
@@ -259,7 +262,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLNumberFormat(XLNumberFormat&& other) noexcept = default;
+        XLNumberFormat(XLNumberFormat&& other) noexcept;
 
         /**
          * @brief
@@ -278,7 +281,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLNumberFormat& operator=(XLNumberFormat&& other) noexcept = default;
+        XLNumberFormat& operator=(XLNumberFormat&& other) noexcept;
 
         /**
          * @brief Get the id of the number format
@@ -357,7 +360,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLNumberFormats& operator=(XLNumberFormats&& other) noexcept = default;
+        XLNumberFormats& operator=(XLNumberFormats&& other) noexcept;
 
         /**
          * @brief Get the count of number formats
@@ -444,7 +447,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLFont(XLFont&& other) noexcept = default;
+        XLFont(XLFont&& other) noexcept;
 
         /**
          * @brief
@@ -463,7 +466,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLFont& operator=(XLFont&& other) noexcept = default;
+        XLFont& operator=(XLFont&& other) noexcept;
 
         /**
          * @brief Get the font name
@@ -488,6 +491,12 @@ namespace OpenXLSX
          * @return The font size
          */
         size_t fontSize() const;
+
+        /**
+         * @brief Get the control object for the font color (to access detailed properties)
+         * @return an XLDataBarColor object that can be used to access and modify color properties
+         */
+        XLDataBarColor fontDataBarColor();
 
         /**
          * @brief Get the font color
@@ -638,7 +647,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLFonts& operator=(XLFonts&& other) noexcept = default;
+        XLFonts& operator=(XLFonts&& other) noexcept;
 
         /**
          * @brief Get the count of fonts
@@ -705,12 +714,12 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLDataBarColor(XLDataBarColor&& other) noexcept = default;
+        XLDataBarColor(XLDataBarColor&& other) noexcept;
 
         /**
          * @brief
          */
-        ~XLDataBarColor() = default;
+        ~XLDataBarColor();
 
         /**
          * @brief Copy assignment operator.
@@ -724,7 +733,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLDataBarColor& operator=(XLDataBarColor&& other) noexcept = default;
+        XLDataBarColor& operator=(XLDataBarColor&& other) noexcept;
 
         /**
          * @brief Get the line color from the rgb attribute
@@ -756,6 +765,20 @@ namespace OpenXLSX
         bool setAutomatic(bool set = true);
         bool setIndexed  (uint32_t newIndex);
         bool setTheme    (uint32_t newTheme);
+
+        /**
+         * @brief get the underlying raw XML of the object
+         * @return string with raw XML of the color node - empty string for empty object
+         */
+        std::string rawXml() const;
+
+        /**
+         * @brief set the underlying raw XML of the object
+         * @param xml the raw XML that shall be assigned to the node - minimum valid is
+         * @return true for success, false for failure - using on an empty node == failure
+         * @warning Using this function with bad XML can break your document. Use with extreme care!
+         */
+        bool setRawXml(std::string xml);
 
         /**
          * @brief Return a string summary of the color properties
@@ -800,12 +823,12 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLGradientStop(XLGradientStop&& other) noexcept = default;
+        XLGradientStop(XLGradientStop&& other) noexcept;
 
         /**
          * @brief
          */
-        ~XLGradientStop() = default;
+        ~XLGradientStop();
 
         /**
          * @brief Copy assignment operator.
@@ -819,7 +842,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLGradientStop& operator=(XLGradientStop&& other) noexcept = default;
+        XLGradientStop& operator=(XLGradientStop&& other) noexcept;
 
         /**
          * @brief Getter functions
@@ -892,7 +915,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLGradientStops& operator=(XLGradientStops&& other) noexcept = default;
+        XLGradientStops& operator=(XLGradientStops&& other) noexcept;
 
         /**
          * @brief Get the count of gradient stops
@@ -957,7 +980,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLFill(XLFill&& other) noexcept = default;
+        XLFill(XLFill&& other) noexcept;
 
         /**
          * @brief
@@ -976,7 +999,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLFill& operator=(XLFill&& other) noexcept = default;
+        XLFill& operator=(XLFill&& other) noexcept;
 
         /**
          * @brief Get the name of the element describing a fill
@@ -1111,7 +1134,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLFills& operator=(XLFills&& other) noexcept = default;
+        XLFills& operator=(XLFills&& other) noexcept;
 
         /**
          * @brief Get the count of fills
@@ -1179,7 +1202,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLLine(XLLine&& other) noexcept = default;
+        XLLine(XLLine&& other) noexcept;
 
         /**
          * @brief
@@ -1198,7 +1221,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLLine& operator=(XLLine&& other) noexcept = default;
+        XLLine& operator=(XLLine&& other) noexcept;
 
         /**
          * @brief Get the line style
@@ -1259,7 +1282,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLBorder(XLBorder&& other) noexcept = default;
+        XLBorder(XLBorder&& other) noexcept;
 
         /**
          * @brief
@@ -1278,7 +1301,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLBorder& operator=(XLBorder&& other) noexcept = default;
+        XLBorder& operator=(XLBorder&& other) noexcept;
 
         /**
          * @brief Get the diagonal up property
@@ -1416,7 +1439,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLBorders& operator=(XLBorders&& other) noexcept = default;
+        XLBorders& operator=(XLBorders&& other) noexcept;
 
         /**
          * @brief Get the count of border descriptions
@@ -1484,7 +1507,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLAlignment(XLAlignment&& other) noexcept = default;
+        XLAlignment(XLAlignment&& other) noexcept;
 
         /**
          * @brief
@@ -1503,7 +1526,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLAlignment& operator=(XLAlignment&& other) noexcept = default;
+        XLAlignment& operator=(XLAlignment&& other) noexcept;
 
         /**
          * @brief Get the horizontal alignment
@@ -1625,7 +1648,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLCellFormat(XLCellFormat&& other) noexcept = default;
+        XLCellFormat(XLCellFormat&& other) noexcept;
 
         /**
          * @brief
@@ -1644,7 +1667,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCellFormat& operator=(XLCellFormat&& other) noexcept = default;
+        XLCellFormat& operator=(XLCellFormat&& other) noexcept;
 
         /**
          * @brief Get the number format id
@@ -1839,7 +1862,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCellFormats& operator=(XLCellFormats&& other) noexcept = default;
+        XLCellFormats& operator=(XLCellFormats&& other) noexcept;
 
         /**
          * @brief Get the count of cell style format descriptions
@@ -1910,7 +1933,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLCellStyle(XLCellStyle&& other) noexcept = default;
+        XLCellStyle(XLCellStyle&& other) noexcept;
 
         /**
          * @brief
@@ -1929,7 +1952,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCellStyle& operator=(XLCellStyle&& other) noexcept = default;
+        XLCellStyle& operator=(XLCellStyle&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -2053,7 +2076,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLCellStyles& operator=(XLCellStyles&& other) noexcept = default;
+        XLCellStyles& operator=(XLCellStyles&& other) noexcept;
 
         /**
          * @brief Get the count of cell styles
@@ -2121,7 +2144,7 @@ namespace OpenXLSX
          * @brief Move Constructor.
          * @param other Object to be moved.
          */
-        XLDiffCellFormat(XLDiffCellFormat&& other) noexcept = default;
+        XLDiffCellFormat(XLDiffCellFormat&& other) noexcept;
 
         /**
          * @brief
@@ -2140,7 +2163,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLDiffCellFormat& operator=(XLDiffCellFormat&& other) noexcept = default;
+        XLDiffCellFormat& operator=(XLDiffCellFormat&& other) noexcept;
 
         /**
          * @brief Test if this is an empty node
@@ -2231,7 +2254,7 @@ namespace OpenXLSX
          * @param other Right hand side of assignment operation.
          * @return A reference to lhs object.
          */
-        XLDiffCellFormats& operator=(XLDiffCellFormats&& other) noexcept = default;
+        XLDiffCellFormats& operator=(XLDiffCellFormats&& other) noexcept;
 
         /**
          * @brief Get the count of differential cell formats
@@ -2379,6 +2402,7 @@ namespace OpenXLSX
         std::unique_ptr<XLCellFormats>      m_cellFormats;      // handle to the underlying cell formats descriptions
         std::unique_ptr<XLCellStyles>       m_cellStyles;       // handle to the underlying cell styles
         std::unique_ptr<XLDiffCellFormats>  m_diffCellFormats;  // handle to the underlying differential cell formats
+        inline static const std::vector< std::string_view > m_nodeOrder = { "numFmts", "fonts", "fills", "borders", "cellStyleXfs", "cellXfs", "cellStyles", "dxfs", "tableStyles", "colors", "extLst" };
     };
 }    // namespace OpenXLSX
 

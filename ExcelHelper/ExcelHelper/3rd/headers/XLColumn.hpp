@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -58,7 +60,7 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 // ===== OpenXLSX Includes ===== //
 #include "OpenXLSX-Exports.hpp"
 #include "XLStyles.hpp"          // XLStyleIndex
-#include "XLXmlParser.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 namespace OpenXLSX
 {
@@ -75,7 +77,7 @@ namespace OpenXLSX
         explicit XLColumn(const XMLNode& columnNode);
 
         /**
-         * @brief Copy Constructor [deleted]
+         * @brief Copy Constructor
          */
         XLColumn(const XLColumn& other);
 
@@ -91,16 +93,16 @@ namespace OpenXLSX
         ~XLColumn();
 
         /**
-         * @brief Copy assignment operator [deleted]
+         * @brief Copy assignment operator
          */
         XLColumn& operator=(const XLColumn& other);
 
         /**
-         * @brief
+         * @brief Move assignment operator
          * @param other
          * @return
          */
-        XLColumn& operator=(XLColumn&& other) noexcept = default;
+        XLColumn& operator=(XLColumn&& other) noexcept;
 
         /**
          * @brief Get the width of the column.

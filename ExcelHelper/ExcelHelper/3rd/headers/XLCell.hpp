@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -63,6 +65,7 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #include "XLFormula.hpp"
 #include "XLSharedStrings.hpp"
 #include "XLStyles.hpp"          // XLStyleIndex
+#include "XLXmlParserForwardDeclarations.hpp"
 
 // ========== CLASS AND ENUM TYPE DEFINITIONS ========== //
 namespace OpenXLSX
@@ -256,16 +259,28 @@ namespace OpenXLSX
         XLCellAssignable() : XLCell() {}
 
         /**
-         * @brief Copy constructor. Constructs an assignable XLCell from an existing cell
+         * @brief Constructor. Constructs an XLCellAssignable from an existing cell
          * @param other the cell to construct from
          */
         XLCellAssignable (XLCell const & other);
 
         /**
-         * @brief Move constructor. Constructs an assignable XLCell from a temporary (r)value
+         * @brief Constructor from XLCell rvalue. Constructs an XLCellAssignable from a temporary (r)value
          * @param other the cell to construct from
          */
-        XLCellAssignable (XLCell && other);
+        XLCellAssignable (XLCell && other) noexcept;
+
+        /**
+         * @brief Copy constructor
+         * @param other the cell to construct from
+         */
+        XLCellAssignable (XLCellAssignable const & other);
+
+        /**
+         * @brief Move constructor. Constructs an XLCellAssignable from a temporary (r)value
+         * @param other the cell to construct from
+         */
+        XLCellAssignable (XLCellAssignable && other) noexcept;
 
         // /**
         //  * @brief Inherit all constructors with parameters from XLCell

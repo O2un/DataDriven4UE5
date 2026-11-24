@@ -1,4 +1,6 @@
 /*
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-FileCopyrightText: Copyright (c) 2018, Kenneth Troldal Balslev
 
    ____                               ____      ___ ____       ____  ____      ___
   6MMMMb                              `MM(      )M' `MM'      6MMMMb\`MM(      )M'
@@ -62,8 +64,10 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 
 // ===== OpenXLSX Includes ===== //
 #include "OpenXLSX-Exports.hpp"
+#include "XLCellRange.hpp"
 #include "XLCellReference.hpp"
-#include "XLXmlParser.hpp" // XMLNode, pugi node types
+#include "XLSharedStrings.hpp"
+#include "XLXmlParserForwardDeclarations.hpp"
 
 namespace OpenXLSX
 {
@@ -71,7 +75,7 @@ namespace OpenXLSX
     constexpr const XLMergeIndex XLMergeNotFound = -1;
 
     // pull request #261: wrapped max in parentheses to prevent expansion of windows.h "max" macro
-    constexpr size_t XLMaxMergeCells = (std::numeric_limits< XLMergeIndex >::max)();
+    constexpr XLMergeIndex XLMaxMergeCells = (std::numeric_limits< XLMergeIndex >::max)();
 
     /**
      * @brief This class encapsulate the Excel concept of <mergeCells>. Each worksheet that has merged cells has a list of
@@ -96,7 +100,7 @@ namespace OpenXLSX
          * @param node The root node of the worksheet document - must not be an empty node
          * @param nodeOrder the worksheet node sequence to respect when inserting <mergeCells> node
          */
-        explicit XLMergeCells(const XMLNode& rootNode, std::vector< std::string_view > const & nodeOrder);
+        explicit XLMergeCells(const XMLNode& rootNode, std::vector< std::string_view > const & nodeOrder, const XLSharedStrings& sharedStrings);
 
         /**
          * @brief Destructor
@@ -104,26 +108,26 @@ namespace OpenXLSX
         ~XLMergeCells();
 
         /**
-         * @brief
+         * @brief Copy constructor
          * @param other
          */
         XLMergeCells(const XLMergeCells& other);
 
         /**
-         * @brief
+         * @brief Move constructor
          * @param other
          */
         XLMergeCells(XLMergeCells&& other);
 
         /**
-         * @brief
+         * @brief Copy assignment operator
          * @param other
          * @return
          */
         XLMergeCells& operator=(const XLMergeCells& other);
 
         /**
-         * @brief
+         * @brief Move assignment operator
          * @param other
          * @return
          */
@@ -161,7 +165,7 @@ namespace OpenXLSX
          * @brief get the amount of entries in <mergeCells>
          * @return the count of defined cell merges
          */
-        size_t count() const;
+        XLMergeIndex count() const;
 
         /**
          * @brief return the cell reference string for the given index
@@ -169,6 +173,13 @@ namespace OpenXLSX
          * @return
          */
         const char* merge(XLMergeIndex index) const;
+
+        /**
+         * @brief return an XLCellRange representing the merge for the given index
+         * @param index
+         * @return
+         */
+        XLCellRange mergeAsRange(XLMergeIndex index) const;
 
         /**
          * @brief Operator overload: allow [] as shortcut access to merge
@@ -202,10 +213,11 @@ namespace OpenXLSX
         void print(std::basic_ostream<char>& ostr) const;
 
     private:
-        std::unique_ptr<XMLNode> m_rootNode;         /**< An XMLNode object with the worksheet root node (document element) */
-        std::vector< std::string_view > m_nodeOrder; /**< worksheet XML root node required child sequence as passed into constructor */
-        std::unique_ptr<XMLNode> m_mergeCellsNode; /**< An XMLNode object with the mergeCells item */
-        std::deque<std::string> m_referenceCache;
+        std::unique_ptr<XMLNode>        m_rootNode;         /**< An XMLNode object with the worksheet root node (document element) */
+        std::vector< std::string_view > m_nodeOrder;        /**< worksheet XML root node required child sequence as passed into constructor */
+        std::unique_ptr<XMLNode>        m_mergeCellsNode;   /**< An XMLNode object with the mergeCells item */
+        std::deque<std::string>         m_referenceCache;
+        XLSharedStringsRef              m_sharedStrings;    /**< reference to the document shared strings table - for returning a merge as XLCellRange */
     };
 }    // namespace OpenXLSX
 
