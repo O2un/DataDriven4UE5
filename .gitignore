@@ -73,8 +73,9 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-ExcelHelper/x64
-ExcelHelper/ExcelHelper/x64
+
+# ExcelHelper DLL MSBuild outputs / intermediates (x64/, ExcelHelper/x64/ ...)
+ExcelHelper/**/x64/
 
 # prebuilt OpenXLSX v0.5.2 static lib (miniz/nowide/pugixml merged)
 !ExcelHelper/ExcelHelper/3rd/OpenXLSX.lib
