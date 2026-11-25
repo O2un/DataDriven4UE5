@@ -47,7 +47,7 @@ int32 SStaticDataGraph::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		FSlateDrawElement::MakeText(
 			OutDrawElements,
 			LayerId,
-			AllottedGeometry.MakeChild(YLabelPos, FVector2D(100.0f, 20.0f)).ToPaintGeometry(),
+			AllottedGeometry.ToPaintGeometry(FVector2f(100.0f, 20.0f), FSlateLayoutTransform(FVector2f(YLabelPos))),
 			FString::Printf(TEXT("%.2f"), LabelVal),
 			FontInfo,
 			ESlateDrawEffect::None,
@@ -66,7 +66,7 @@ int32 SStaticDataGraph::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		FSlateDrawElement::MakeText(
 			OutDrawElements,
 			LayerId,
-			AllottedGeometry.MakeChild(XLabelPos, FVector2D(50.0f, 20.0f)).ToPaintGeometry(),
+			AllottedGeometry.ToPaintGeometry(FVector2f(50.0f, 20.0f), FSlateLayoutTransform(FVector2f(XLabelPos))),
 			FString::FromInt(KeyIdx),
 			FontInfo,
 			ESlateDrawEffect::None,
@@ -101,14 +101,14 @@ int32 SStaticDataGraph::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 
 		FSlateDrawElement::MakeBox(
 			OutDrawElements, LayerId + 2,
-			AllottedGeometry.MakeChild(CirclePos - FVector2D(4, 4), FVector2D(8, 8)).ToPaintGeometry(),
+			AllottedGeometry.ToPaintGeometry(FVector2f(8.0f, 8.0f), FSlateLayoutTransform(FVector2f(CirclePos - FVector2D(4, 4)))),
 			FAppStyle::GetBrush("WhiteBrush"), ESlateDrawEffect::None, FLinearColor::Red
 		);
 
 		FString TooltipStr = FString::Printf(TEXT("Idx: %d\nVal: %.2f"), DataIdx, DataValue);
 		FSlateDrawElement::MakeText(
 			OutDrawElements, LayerId + 3,
-			AllottedGeometry.MakeChild(CirclePos + FVector2D(10, -20), FVector2D(150, 40)).ToPaintGeometry(),
+			AllottedGeometry.ToPaintGeometry(FVector2f(150.0f, 40.0f), FSlateLayoutTransform(FVector2f(CirclePos + FVector2D(10, -20)))),
 			TooltipStr, FontInfo, ESlateDrawEffect::None, FLinearColor::Yellow
 		);
 	}

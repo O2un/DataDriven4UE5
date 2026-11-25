@@ -122,7 +122,11 @@ std::string_view CodeGenerator::GetOrLoadTemplate(int resourceID)
 
         if (!pData) return "";
 
-        _templateCache[resourceID] = std::string(pData, size);
+        // 템플릿은 체크아웃 설정에 따라 CRLF일 수 있다. 출력은 텍스트 모드(\n -> \r\n)로 쓰므로
+        // 여기서 \r을 제거해야 \r\r\n 이 생기지 않는다.
+        std::string text(pData, size);
+        std::erase(text, '\r');
+        _templateCache[resourceID] = std::move(text);
     }
     return _templateCache[resourceID];
 }
@@ -159,8 +163,8 @@ CodeGenerator::GeneratedCodeResult CodeGenerator::BuildValuesSection(const OpenX
         if (CommonHelper::Equals(colType,"key")) continue;
 
         result.properties += "\tUPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = \"StaticData\")\n";
-        result.properties += std::format("\t{} _{};\n\n", MapToCppType(colType), colName);
-        result.inits += std::format("\tUPROPERTY()\n\t{} _{};\n", MapToCppType(colType), colName);
+        result.properties += std::format("\t{} _{}{{}};\n\n", MapToCppType(colType), colName);
+        result.inits += std::format("\tUPROPERTY()\n\t{} _{}{{}};\n", MapToCppType(colType), colName);
         result.assigns += std::format("\t_{} = initor._{};\n", colName ,colName);
     }
 

@@ -13,12 +13,12 @@
 USTRUCT()
 struct FtestDataInitStruct : public FStaticDataInitStruct
 {
-GENERATED_BODY()
+    GENERATED_BODY()
 
-UPROPERTY()
-	int32 _data;
-UPROPERTY()
-	float _value;
+	UPROPERTY()
+	int32 _data{};
+	UPROPERTY()
+	float _value{};
 
 };
 
@@ -29,10 +29,10 @@ class DATADRIVEN4UE5_API UtestDataStaticData : public UStaticDataBase
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
-	int32 _data;
+	int32 _data{};
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
-	float _value;
+	float _value{};
 
 
     virtual void Initialize(const FStaticDataInitStruct& data) override;

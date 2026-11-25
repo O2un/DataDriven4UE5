@@ -13,10 +13,10 @@
 USTRUCT()
 struct F3rdSheetInitStruct : public FStaticDataInitStruct
 {
-GENERATED_BODY()
+    GENERATED_BODY()
 
-UPROPERTY()
-	FString _data;
+	UPROPERTY()
+	FString _data{};
 
 };
 
@@ -27,7 +27,7 @@ class DATADRIVEN4UE5_API U3rdSheetStaticData : public UStaticDataBase
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StaticData")
-	FString _data;
+	FString _data{};
 
 
     virtual void Initialize(const FStaticDataInitStruct& data) override;
