@@ -1,0 +1,3 @@
+[submodule "O2unMCP"]
+	path = O2unMCP
+	url = https://github.com/O2un/O2unMCP.git
