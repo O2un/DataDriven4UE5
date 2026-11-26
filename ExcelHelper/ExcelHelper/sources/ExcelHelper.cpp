@@ -20,17 +20,17 @@ namespace
 		}
 		catch (const std::exception& e)
 		{
-			Logger::UELog(std::format("{} 처리 중 예외: {}", functionName, CommonHelper::ToUtf8FromSystem(e.what())));
+			Logger::Error(std::format("{} 처리 중 예외: {}", functionName, CommonHelper::ToUtf8FromSystem(e.what())));
 		}
 		catch (...)
 		{
-			Logger::UELog(std::format("{} 처리 중 알 수 없는 예외", functionName));
+			Logger::Error(std::format("{} 처리 중 알 수 없는 예외", functionName));
 		}
 		return fallback;
 	}
 }
 
-void SetLogHandler(logCallback c)
+void SetLogHandlerWithLevel(logCallback c)
 {
 	Logger::Instance().SetLogHandler(c);
 }

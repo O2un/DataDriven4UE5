@@ -46,7 +46,7 @@ std::vector<fs::path> ExcelLoader::LoadAllFilePath(std::string_view root)
 	}
 	catch (const fs::filesystem_error& e)
 	{
-		Logger::UELog(std::format("Error : {}", e.what()));
+		Logger::Error(std::format("Error : {}", e.what()));
 	}
 
 	return files;
@@ -178,7 +178,7 @@ const char* ExcelLoader::LoadExcel(std::string_view path, std::string_view class
 	auto wb = LoadWorkbook(doc, path);
 	if (false == wb.valid())
 	{
-		Logger::UELog(std::format("엑셀 파일{}이 존재하지 않습니다.", path));
+		Logger::Error(std::format("엑셀 파일{}이 존재하지 않습니다.", path));
 		return "";
 	}
 
@@ -201,7 +201,7 @@ const char* ExcelLoader::GetExcelList(std::string_view root)
 
 			if (index.contains(name.data()))
 			{
-				Logger::UELog(std::format("엑셀 경로{} 중복된 시트이름{} 입니다 수정해주세요", doc.path(), name));
+				Logger::Error(std::format("엑셀 경로{} 중복된 시트이름{} 입니다 수정해주세요", doc.path(), name));
 			}
 			else
 			{

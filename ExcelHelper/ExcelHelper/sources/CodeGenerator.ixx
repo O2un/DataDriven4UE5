@@ -18,8 +18,10 @@ export namespace CodeGen
 	};
 
 	// 생성기가 지원하는 컬럼 타입의 단일 원천. 추후 GetCapabilities도 이 표를 쓴다 (design/ai-fill.md §7).
-	inline constexpr std::array<ColumnTypeInfo, 8> SupportedColumnTypes{ {
+	// 정수는 크기를 이름으로 명시한다: int = 32비트, long = 64비트
+	inline constexpr std::array<ColumnTypeInfo, 9> SupportedColumnTypes{ {
 		{ "int",    "int32"   },
+		{ "long",   "int64"   },
 		{ "float",  "float"   },
 		{ "double", "double"  },
 		{ "bool",   "bool"    },

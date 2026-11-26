@@ -11,7 +11,7 @@
 void FO2unExcelHelperModule::StartupModule()
 {
 	_excelHelperHandle = O2un::FPluginHelper::LoadDLL("ExcelHelper");
-	SetLogHandler(&FO2unLogProvider);
+	SetLogHandlerWithLevel(&FO2unLogProvider);
 
 	// 빈 경로·없는 폴더는 DLL에 넘기지 않는다 (빈 값이면 DLL이 드라이브 루트에 쓴다).
 	// 생성 메뉴(UExcelHelperSubsystem::GenerateDataScript)가 실행 직전에 다시 확인하고 넘긴다

@@ -50,7 +50,7 @@ namespace
     }
 
     // 범위 검사 대상 컬럼 (2행 타입 기준)
-    enum class NumericColumn { None, Int32, Float, Double };
+    enum class NumericColumn { None, Int32, Int64, Float, Double };
 
     NumericColumn ToNumericColumn(std::string_view key, std::string_view typeName)
     {
@@ -62,6 +62,10 @@ namespace
         if (CommonHelper::Equals(typeName, "int") || CommonHelper::Equals(typeName, "key"))
         {
             return NumericColumn::Int32;
+        }
+        if (CommonHelper::Equals(typeName, "long"))
+        {
+            return NumericColumn::Int64;
         }
         if (CommonHelper::Equals(typeName, "float"))
         {
@@ -122,7 +126,7 @@ namespace
     // 너무 큰 수 판정. 데이터에 넣으면 안 되면 사유를 돌려준다 (호출부가 0으로 바꾸고 오류 로그).
     // ① 원문과 OpenXLSX가 읽은 값이 다름: '.' 없는 지수 표기(1e+20)를 OpenXLSX가 정수로 분류해 1로 읽는 경우,
     //    int64를 넘는 정수 원문이 잘리는 경우, 원문이 double 범위를 넘는 경우
-    // ② 컬럼 타입 범위 초과: int(키 포함) = int32, float = float 유한 범위 (double 범위 초과는 ①에 포함)
+    // ② 컬럼 타입 범위 초과: int(키 포함) = int32, long = int64, float = float 유한 범위 (double 범위 초과는 ①에 포함)
     std::optional<std::string> FindTooLargeNumber(const OpenXLSX::XLCellValueProxy& value, std::string_view raw, NumericColumn column)
     {
         double rawNumber = 0.0;
@@ -163,7 +167,24 @@ namespace
             const double truncated = std::trunc(rawNumber);   // UE는 Atoi64로 소수부를 버린다
             if (truncated < static_cast<double>(INT32_MIN) || static_cast<double>(INT32_MAX) < truncated)
             {
-                return std::string("int 범위(-2147483648 ~ 2147483647)를 넘습니다");
+                return std::string("int 범위(-2147483648 ~ 2147483647)를 넘습니다. 더 큰 정수는 long 타입을 쓰세요");
+            }
+            break;
+        }
+        case NumericColumn::Int64:
+        {
+            // 정수 원문은 int64로 직접 파싱한다 (INT64_MAX는 double로 바꾸면 2^63으로 반올림되어 오판한다)
+            int64_t rawInteger = 0;
+            const auto [intEnd, intEc] = std::from_chars(raw.data(), rawEnd, rawInteger);
+            if (intEc == std::errc{} && intEnd == rawEnd)
+            {
+                break;
+            }
+            // 소수·지수 원문: int64 경계(-2^63, 2^63)는 double로 정확히 표현된다
+            const double truncated = std::trunc(rawNumber);
+            if (truncated < -9223372036854775808.0 || 9223372036854775808.0 <= truncated)
+            {
+                return std::string("long 범위(-9223372036854775808 ~ 9223372036854775807)를 넘습니다");
             }
             break;
         }
@@ -236,7 +257,7 @@ const char* JsonParser::ExcelToJson(const OpenXLSX::XLWorksheet& sheet)
 
         if (keyCount != cellCount)
         {
-            Logger::UELog(std::format("{}시트의 {}라인의 데이터 값에 빈값이 있거나 넘칩니다.", sheet.name(), ii));
+            Logger::Warning(std::format("{}시트의 {}라인의 데이터 값에 빈값이 있거나 넘칩니다.", sheet.name(), ii));
             continue;
         }
 
@@ -271,7 +292,7 @@ const char* JsonParser::ExcelToJson(const OpenXLSX::XLWorksheet& sheet)
                     {
                         // 너무 큰 수는 데이터에 넣지 않는다: 값은 0, 행은 유지
                         const std::string columnKey = column < columnKeys.size() ? columnKeys[column] : std::string();
-                        Logger::UELog(std::format("[오류] {}시트 {}행 {}열({}) 값 '{}': {} -> 0으로 넣습니다.",
+                        Logger::Error(std::format("{}시트 {}행 {}열({}) 값 '{}': {} -> 0으로 넣습니다.",
                             sheet.name(), ii, OpenXLSX::XLCellReference::columnAsString(column), columnKey, *raw, *reason));
                         text = "0";
                     }
@@ -317,7 +338,7 @@ const char* JsonParser::ExcelToJson(const OpenXLSX::XLWorksheet& sheet)
         }
         else
         {
-            Logger::UELog(std::format("{}시트의 키값이 존재하지 않습니다 키컬럼(id)은 필수 입니다.", sheet.name()));
+            Logger::Error(std::format("{}시트의 키값이 존재하지 않습니다 키컬럼(id)은 필수 입니다.", sheet.name()));
             break;
         }
 
