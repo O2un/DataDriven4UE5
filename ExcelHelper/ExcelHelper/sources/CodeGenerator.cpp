@@ -2,6 +2,7 @@
 // Copyright (c) 2026 [Jaewon Cho]. All rights reserved.
 module;
 #include "../resource.h"
+#include "OpenXLSX.hpp"
 
 module ICodeGenerator;
 
@@ -11,18 +12,95 @@ import <format>;
 import <iostream>;
 import <unordered_map>;
 import <filesystem>;
+import <algorithm>;
+import <array>;
+import <optional>;
 import ICodeGenerator;
 import IStringHelper;
-import IContainerHelper;
 import ITimeHelper;
 import ILogger;
 
 namespace fs = std::filesystem;
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
+namespace
+{
+    enum class HeaderCellKind
+    {
+        Empty,      // 셀 없음, 빈 값, 빈 문자열
+        Text,       // 문자열
+        NotText,    // 숫자·불리언 등 (이름/타입 칸으로 쓸 수 없음)
+    };
+
+    struct HeaderCell
+    {
+        HeaderCellKind kind = HeaderCellKind::Empty;
+        std::string text;
+    };
+
+    // 1·2행(이름/타입) 셀을 읽는다. get<std::string>()은 숫자 셀에서 예외를 던지므로 타입을 먼저 본다
+    HeaderCell ReadHeaderCell(OpenXLSX::XLRow& row, uint16_t columnNumber)
+    {
+        OpenXLSX::XLCell cell = row.findCell(columnNumber);
+        if (!cell)
+        {
+            return {};
+        }
+
+        const auto& value = cell.value();
+        if (value.type() == OpenXLSX::XLValueType::Empty)
+        {
+            return {};
+        }
+
+        // 서식만 있는 셀(<c s="1" t="n"/>처럼 값 없는 셀)은 타입이 Empty가 아닐 수 있다 -> 문자열이 비면 빈 칸으로 본다
+        std::string text = value.getString();
+        if (text.empty())
+        {
+            return {};
+        }
+        if (value.type() == OpenXLSX::XLValueType::String)
+        {
+            return { HeaderCellKind::Text, std::move(text) };
+        }
+        return { HeaderCellKind::NotText, std::move(text) };
+    }
+}
+
 void CodeGenerator::GenerateHeader(const OpenXLSX::XLWorksheet& sheet)
 {
-    if (false == CreateStaticData(sheet))
+    // 시트 하나의 예외(OpenXLSX 값 타입 오류, 파일 시스템 오류 등)가 다른 시트 생성이나 C 경계까지 번지지 않게 여기서 막는다
+    std::string sheetName;
+    try
+    {
+        sheetName = sheet.name();
+        GenerateHeaderUnchecked(sheet);
+    }
+    catch (const std::exception& e)
+    {
+        Logger::UELog(std::format("{}시트 코드 생성 중 예외로 이 시트를 건너뜁니다: {}", sheetName, CommonHelper::ToUtf8FromSystem(e.what())));
+    }
+    catch (...)
+    {
+        Logger::UELog(std::format("{}시트 코드 생성 중 알 수 없는 예외로 이 시트를 건너뜁니다", sheetName));
+    }
+}
+
+void CodeGenerator::GenerateHeaderUnchecked(const OpenXLSX::XLWorksheet& sheet)
+{
+    GeneratedCodeResult values = BuildValuesSection(sheet);
+    if (false == values.errors.empty())
+    {
+        // 오류가 있는 시트는 StaticData/DataAsset 파일을 모두 쓰지 않는다 (기존 생성 파일은 그대로 둔다)
+        for (const auto& error : values.errors)
+        {
+            Logger::UELog(error);
+        }
+        Logger::UELog(std::format("{}시트 코드 생성 중단: 오류 {}건 (기존 생성 파일은 유지)", sheet.name(), values.errors.size()));
+        return;
+    }
+
+    if (false == CreateStaticData(sheet, values))
     {
         Logger::UELog(std::format("{}시트의 StaticData 파일 생성 실패", sheet.name()));
     }
@@ -38,7 +116,7 @@ void CodeGenerator::SetCodeGeneratePath(std::string_view projectName, std::strin
     _codePath = path;
 }
 
-bool CodeGenerator::CreateStaticData(const OpenXLSX::XLWorksheet& sheet)
+bool CodeGenerator::CreateStaticData(const OpenXLSX::XLWorksheet& sheet, const GeneratedCodeResult& values)
 {
     auto header = GetOrLoadTemplate(TEMPLATE_STATIC_DATA);
     if (header.empty())
@@ -52,7 +130,7 @@ bool CodeGenerator::CreateStaticData(const OpenXLSX::XLWorksheet& sheet)
         return false;
     }
 
-    auto [properties, inits, assigns] = BuildValuesSection(sheet);
+    const auto& [properties, inits, assigns, errors] = values;
     std::string currentYear = CommonHelper::GetCurrentYear();
     std::string className = sheet.name();
     std::string headerContent{ header };
@@ -148,41 +226,88 @@ CodeGenerator::GeneratedCodeResult CodeGenerator::BuildValuesSection(const OpenX
     auto namesRow = sheet.row(1);
     auto typesRow = sheet.row(2);
 
-    uint32_t cellCount = namesRow.cellCount();
-    if (cellCount != typesRow.cellCount())
+    // cellCount()는 서식만 있는 빈 셀도 세므로 칸 수 비교 대신 열마다 이름/타입 짝을 확인한다
+    const uint32_t columnLimit = std::max<uint32_t>(namesRow.cellCount(), typesRow.cellCount());
+    for (uint32_t ii = 1; ii <= columnLimit; ++ii)
     {
-        return result;
-    }
+        const uint16_t columnNumber = static_cast<uint16_t>(ii);
+        const HeaderCell nameCell = ReadHeaderCell(namesRow, columnNumber);
+        const HeaderCell typeCell = ReadHeaderCell(typesRow, columnNumber);
+        const std::string columnLetter = OpenXLSX::XLCellReference::columnAsString(columnNumber);
 
-    for (uint32_t ii = 1; ii <= cellCount; ++ii)
-    {
-        std::string colName = namesRow.findCell(ii).value().get<std::string>();
-        std::string colType = typesRow.findCell(ii).value().get<std::string>();
+        if (nameCell.kind == HeaderCellKind::Empty && typeCell.kind == HeaderCellKind::Empty)
+        {
+            continue;   // 비어 있거나 서식만 있는 열
+        }
+        if (nameCell.kind == HeaderCellKind::NotText)
+        {
+            result.errors.push_back(std::format("{}시트 {}열: 1행 이름 '{}'이(가) 문자열이 아닙니다", sheet.name(), columnLetter, nameCell.text));
+            continue;
+        }
+        if (typeCell.kind == HeaderCellKind::NotText)
+        {
+            result.errors.push_back(std::format("{}시트 {}열({}): 2행 타입 '{}'이(가) 문자열이 아닙니다", sheet.name(), columnLetter, nameCell.text, typeCell.text));
+            continue;
+        }
+        if (nameCell.kind == HeaderCellKind::Empty)
+        {
+            result.errors.push_back(std::format("{}시트 {}열: 2행 타입 '{}'은(는) 있는데 1행 이름이 비어 있습니다", sheet.name(), columnLetter, typeCell.text));
+            continue;
+        }
+        if (typeCell.kind == HeaderCellKind::Empty)
+        {
+            result.errors.push_back(std::format("{}시트 {}열({}): 1행 이름은 있는데 2행 타입이 비어 있습니다", sheet.name(), columnLetter, nameCell.text));
+            continue;
+        }
 
-        if (colName.empty() || colType.empty()) continue;
-        if (CommonHelper::Equals(colType,"key")) continue;
+        const std::string& colName = nameCell.text;
+        const std::string& colType = typeCell.text;
+
+        auto cppType = MapToCppType(colType);
+        if (false == cppType.has_value())
+        {
+            std::string error = std::format("{}시트 {}열: 지원하지 않는 타입 '{}' (지원: {})", sheet.name(), colName, colType, BuildSupportedTypeList());
+            static constexpr std::array<std::string_view, 5> nonBlueprintIntTypes{ "uint", "uint32", "uint64", "int8", "int16" };
+            if (std::ranges::any_of(nonBlueprintIntTypes, [&](std::string_view t) { return CommonHelper::Equals(colType, t); }))
+            {
+                error += ". Blueprint에 노출할 수 없는 정수 타입입니다. int를 사용하세요";
+            }
+            result.errors.push_back(std::move(error));
+            continue;
+        }
+
+        if (cppType->empty()) continue;   // key: 멤버를 만들지 않는다 (_key로 간다)
 
         result.properties += "\tUPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = \"StaticData\")\n";
-        result.properties += std::format("\t{} _{}{{}};\n\n", MapToCppType(colType), colName);
-        result.inits += std::format("\tUPROPERTY()\n\t{} _{}{{}};\n", MapToCppType(colType), colName);
+        result.properties += std::format("\t{} _{}{{}};\n\n", *cppType, colName);
+        result.inits += std::format("\tUPROPERTY()\n\t{} _{}{{}};\n", *cppType, colName);
         result.assigns += std::format("\t_{} = initor._{};\n", colName ,colName);
     }
 
     return result;
 }
 
-std::string CodeGenerator::MapToCppType(std::string_view excelType)
+std::optional<std::string_view> CodeGenerator::MapToCppType(std::string_view excelType)
 {
-    static const std::unordered_map<std::string_view, std::string> typeMap = {
-        { "int",    "int32"   },
-        { "float",  "float"   },
-        { "string", "FString" },
-        { "bool",   "bool"    }
-    };
+    for (const auto& info : CodeGen::SupportedColumnTypes)
+    {
+        if (CommonHelper::Equals(excelType, info.excelType))
+        {
+            return info.cppType;
+        }
+    }
+    return std::nullopt;
+}
 
-    std::string lowerType{ excelType };
-    std::ranges::transform(lowerType, lowerType.begin(),::tolower);
-    return CommonHelper::GetValueOrDefault(typeMap, lowerType, std::string{ "FString" });
+std::string CodeGenerator::BuildSupportedTypeList()
+{
+    std::string list;
+    for (const auto& info : CodeGen::SupportedColumnTypes)
+    {
+        if (false == list.empty()) list += ", ";
+        list += info.excelType;
+    }
+    return list;
 }
 
 void CodeGenerator::SaveFile(std::string_view detailPath, std::string_view header, std::string_view cpp)

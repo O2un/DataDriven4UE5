@@ -3,6 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+// 에디터 전용: UStaticDataAssetBase::OpenVisualizer(WITH_EDITOR)에서만 사용
+#if WITH_EDITOR
+
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/SLeafWidget.h"
 
@@ -53,3 +57,5 @@ private:
 	TSharedPtr<STextBlock> _selectedText;
 	TSharedPtr<SStaticDataGraph> _graphWidget;
 };
+
+#endif // WITH_EDITOR

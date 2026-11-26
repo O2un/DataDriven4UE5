@@ -2,6 +2,9 @@
 
 
 #include "SStaticDataVisualizer.h"
+
+#if WITH_EDITOR
+
 #include "StaticDataAssetBase.h"
 
 #include "Widgets/Text/STextBlock.h"
@@ -213,3 +216,5 @@ void SStaticDataVisualizer::OnPropertySelectionChanged(TSharedPtr<FString> NewSe
 		_graphWidget->Invalidate(EInvalidateWidgetReason::Paint);
 	}
 }
+
+#endif // WITH_EDITOR

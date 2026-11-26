@@ -46,8 +46,6 @@ public class O2unDataHelper : ModuleRules
                 "Slate",
                 "SlateCore",
 				// ... add private dependencies that you statically link with here ...
-                "ToolMenus",
-                "MainFrame",
                 "InputCore"
             }
             );
