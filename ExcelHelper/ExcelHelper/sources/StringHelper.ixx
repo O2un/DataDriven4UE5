@@ -25,6 +25,16 @@ export namespace CommonHelper
             });
     }
 
+    // 올바른 UTF-8인지 (빈 문자열은 올바름)
+    inline bool IsValidUtf8(std::string_view text)
+    {
+        if (text.empty())
+        {
+            return true;
+        }
+        return 0 < MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, text.data(), static_cast<int>(text.size()), nullptr, 0);
+    }
+
     // 예외 메시지 등 시스템이 만든 narrow 문자열을 UTF-8로 바꾼다.
     // 이미 올바른 UTF-8이면 그대로 두고, 아니면 ACP(한국어 Windows는 CP949)로 보고 변환한다 (std::filesystem_error::what() 등).
     inline std::string ToUtf8FromSystem(std::string_view text)

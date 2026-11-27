@@ -28,13 +28,25 @@ public:
     {
         _logHandler = handle;
     }
+
+    // 범위 안에서 로그를 내보내지 않는다 (O2un_* 함수가 검증용으로 로더를 돌릴 때 기존 시트 경고가 반복되지 않게).
+    // DLL 호출은 호출자가 직렬화한다는 계약(ExcelHelper.h)이므로 카운터는 원자적이지 않아도 된다
+    class MuteScope
+    {
+    public:
+        MuteScope() { ++Instance()._muteDepth; }
+        ~MuteScope() { --Instance()._muteDepth; }
+        MuteScope(const MuteScope&) = delete;
+        MuteScope& operator=(const MuteScope&) = delete;
+    };
 private:
     void Log(LogLevel level, std::string_view msg)
     {
-        if (!_logHandler) return;
+        if (!_logHandler || 0 < _muteDepth) return;
         // string_view는 널 종료가 보장되지 않으므로 복사해서 넘긴다
         const std::string message(msg);
         _logHandler(static_cast<std::int32_t>(level), message.c_str());
     }
     LogHandler _logHandler = nullptr;
+    int _muteDepth = 0;
 };

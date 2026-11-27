@@ -19,10 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="sources\CellText.ixx" />
     <ClCompile Include="sources\CodeGenerator.cpp" />
     <ClCompile Include="sources\CodeGenerator.ixx" />
     <ClCompile Include="sources\CommonType.ixx" />
     <ClCompile Include="sources\ContainerHelper.ixx" />
+    <ClCompile Include="sources\DataApi.cpp" />
+    <ClCompile Include="sources\DataApi.ixx" />
     <ClCompile Include="sources\ExcelHelper.cpp" />
     <ClCompile Include="sources\ExcelLoader.cpp" />
     <ClCompile Include="sources\IExcelLoader.ixx" />
